@@ -387,7 +387,48 @@
         .legal-modal-content { font-size: 13px; line-height: 1.6; color: var(--text-main); }
         .legal-modal-content h4 { color: var(--primary-color); margin: 12px 0 4px 0; font-size: 14px; }
         .legal-modal-content p { margin: 0 0 8px 0; }
-    </style>
+    
+        /* Native AdMob safe area: Android Studio places the real banner here.
+           Kept separate from calculator controls to reduce accidental taps. */
+        body {
+            padding-bottom: 74px;
+        }
+        .native-ad-safe-area {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 64px;
+            z-index: 900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-main, #ffffff);
+            border-top: 1px solid rgba(100,116,139,.18);
+            box-sizing: border-box;
+            pointer-events: none;
+        }
+        .native-ad-safe-area .ad-label {
+            font-size: 9px;
+            letter-spacing: .4px;
+            color: var(--text-muted, #64748b);
+            position: absolute;
+            top: 2px;
+            left: 6px;
+            text-transform: uppercase;
+        }
+        .native-ad-safe-area .ad-host {
+            width: 100%;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /* The native Android AdView is overlaid by Android Studio; HTML must not
+           intercept taps intended for it. */
+        .native-ad-safe-area .ad-host > * { pointer-events: auto; }
+
+</style>
 
     <script>
         var bbsData = [];
@@ -806,11 +847,19 @@
         }
 
         function triggerApkShare() {
-            var playStoreUrl = 'https://play.google.com/store/apps/details?id=com.webtoapk.BBSProEngine';
-            var shareText = 'Civil Engine BBS Calc - BBS, measurement and civil engineering calculator tools.\n' + playStoreUrl;
-            var data = { title: 'Civil Engine BBS Calc', text: shareText, url: playStoreUrl };
+            var playStoreUrl = 'https://play.google.com/store/apps/details?id=com.shiv.bbscalc';
+            var shareText = 'Civil Engine BBS Calc - BBS, measurement and civil engineering calculator tools.\\n' + playStoreUrl;
 
-            // Android WebView bridges used by some APK wrappers. Use them first when available.
+            // Native Android Studio bridge: Android adds the Play Store URL exactly once.
+            if (window.AndroidShare && typeof window.AndroidShare.shareApp === 'function') {
+                try {
+                    window.AndroidShare.shareApp();
+                    triggerToastNotification('Share panel opened.');
+                    return;
+                } catch (e) {}
+            }
+
+            // Android WebView bridges used by other APK wrappers.
             try {
                 if (window.Android && typeof window.Android.shareText === 'function') {
                     window.Android.shareText(shareText);
@@ -845,7 +894,7 @@
             } catch(e) {}
 
             if (navigator.share) {
-                navigator.share(data).then(function(){
+                navigator.share({ title: 'Civil Engine BBS Calc', text: shareText }).then(function(){
                     triggerToastNotification('App shared successfully!');
                 }).catch(function(err){
                     if (err && err.name === 'AbortError') triggerToastNotification('Share cancelled.');
@@ -1154,7 +1203,7 @@
             }
             htmlData += '</tr>';
             var grandTotalMT = grandTotalKg / 1000;
-            htmlData += '<tr class="grand-total"><td colspan="5" style="text-align:left; border: 0.5pt solid #000000;">Net Summary:</td><td colspan="4" style="border: 0.5pt solid #000000;">' + grandTotalKg.toFixed(2) + ' Kg</td><td colspan="8" style="border: 0.5pt solid #000000;">' + grandTotalMT.toFixed(4) + ' M.T.</td></tr></tbody></table></body></html>';
+            htmlData += '<tr class="grand-total"><td colspan="5" style="text-align:left; border: 0.5pt solid #000000;">Net Summary:</td><td colspan="4" style="border: 0.5pt solid #000000;">' + grandTotalKg.toFixed(2) + ' Kg</td><td colspan="8" style="border: 0.5pt solid #000000;">' + grandTotalMT.toFixed(4) + ' M.T.</td></tr></tbody></table>\n    <!-- Native AdMob safe area.\n         Real AdMob BannerView is added by Android Studio/native Android code.\n         No HTML ad network code is used here. -->\n    <div class="native-ad-safe-area" aria-label="Advertisement">\n        <span class="ad-label">Advertisement</span>\n        <div class="ad-host" id="nativeAdHost"></div>\n    </div>\n\n</body></html>';
 
             var base64 = btoa(unescape(encodeURIComponent(htmlData))), a = document.createElement("a");
             a.href = "data:application/vnd.ms-excel;base64," + base64;
