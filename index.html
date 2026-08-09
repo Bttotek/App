@@ -1148,51 +1148,163 @@
             updateLiveProjectHeader();
         }
 
-        /* BTTOTEK BRANDED PDF EXPORT ENGINE */
+        /* BTTOTEK BRANDED PDF EXPORT ENGINE
+           Output layout mirrors the live sheet:
+           - Title at top
+           - Project / Date directly below
+           - Full live-sheet style table
+           - BTTOTEK website branding only at the bottom
+        */
         function pdfEscapeText(text) {
-            return String(text == null ? "" : text).replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g, "\\)").replace(/\r?\n/g, " ");
+            return String(text == null ? "" : text)
+                .replace(/\\/g, "\\\\")
+                .replace(/\(/g, "\\(")
+                .replace(/\)/g, "\\)")
+                .replace(/\r?\n/g, " ")
+                .replace(/[^\x20-\x7E]/g, "");
         }
-        function buildSimplePdf(lines, filename) {
-            var clean=[];
-            lines.forEach(function(line){ var text=String(line==null?"":line).replace(/[^\x20-\x7E]/g,""); while(text.length>105){clean.push(text.slice(0,105)); text=text.slice(105);} clean.push(text); });
-            var pages=[], page=[];
-            clean.forEach(function(line){ if(page.length>=48){pages.push(page);page=[];} page.push(line); });
-            if(page.length||!pages.length) pages.push(page);
-            var objects=[]; objects[1]='<< /Type /Catalog /Pages 2 0 R >>';
-            var pageRefs=[], contentRefs=[];
-            for(var i=0;i<pages.length;i++){pageRefs.push((3+i*2)+' 0 R');contentRefs.push((4+i*2)+' 0 R');}
-            objects[2]='<< /Type /Pages /Kids ['+pageRefs.join(' ')+'] /Count '+pages.length+' >>';
-            for(var pi=0;pi<pages.length;pi++){
-                var pageObj=3+pi*2, contentObj=4+pi*2;
-                objects[pageObj]='<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 '+(3+pages.length*2)+' 0 R >> >> /Contents '+contentObj+' 0 R >>';
-                var stream='BT\n/F1 10 Tf\n50 750 Td\n';
-                pages[pi].forEach(function(line,idx){ if(idx===0) stream+='/F1 14 Tf\n('+pdfEscapeText(line)+') Tj\n0 -22 Td\n/F1 10 Tf\n'; else stream+='('+pdfEscapeText(line)+') Tj\n0 -15 Td\n'; });
-                stream+='ET'; objects[contentObj]='<< /Length '+stream.length+' >>\nstream\n'+stream+'\nendstream';
+        function pdfTextWidth(text, size) {
+            return String(text == null ? "" : text).length * size * 0.48;
+        }
+        function pdfFitText(text, maxWidth, size) {
+            var t = String(text == null ? "" : text);
+            if (pdfTextWidth(t, size) <= maxWidth) return t;
+            var maxChars = Math.max(3, Math.floor(maxWidth / (size * 0.48)) - 3);
+            return t.slice(0, maxChars) + "...";
+        }
+        function formatReportDate(value) {
+            if (!value) return "";
+            var p = String(value).split("-");
+            return p.length === 3 ? p[2] + "/" + p[1] + "/" + p[0] : value;
+        }
+        function makePdfTableDocument(title, project, date, headers, rows, footerRows, filename, colWidths) {
+            var W = 842, H = 595, margin = 22, usable = W - margin * 2;
+            var widths = colWidths && colWidths.length ? colWidths.slice() : headers.map(function(){ return usable / headers.length; });
+            var widthSum = widths.reduce(function(a,b){ return a+b; }, 0);
+            if (Math.abs(widthSum - usable) > 0.5) widths = widths.map(function(w){ return w * usable / widthSum; });
+
+            var pages = [], current = [], y = H - 78;
+            var rowH = 20, fontSize = headers.length > 12 ? 5.8 : 7.2;
+            function addPage(){ pages.push(current); current=[]; y=H-78; }
+            function drawRow(cells, isHeader, isTotal) {
+                if (y < 52) { addPage(); if (isHeader === false && headers && headers.length) drawRow(headers, true, false); }
+                var x = margin;
+                var h = isHeader ? 25 : rowH;
+                var cmds = [];
+                cmds.push("0.85 G 0.35 w");
+                cmds.push(x.toFixed(2)+" "+(y-h).toFixed(2)+" "+usable.toFixed(2)+" "+h.toFixed(2)+" re S");
+                for (var c=0;c<cells.length;c++) {
+                    var cw=widths[c] || 40;
+                    if (c>0) cmds.push(x.toFixed(2)+" "+(y-h).toFixed(2)+" m "+x.toFixed(2)+" "+y.toFixed(2)+" l S");
+                    var txt=pdfFitText(cells[c], cw-6, fontSize);
+                    var tw=pdfTextWidth(txt,fontSize);
+                    var tx=x+Math.max(3,(cw-tw)/2);
+                    var ty=y-(h/2)-(fontSize/3);
+                    cmds.push("0 g");
+                    cmds.push("/F1 "+fontSize.toFixed(1)+" Tf");
+                    cmds.push(tx.toFixed(2)+" "+ty.toFixed(2)+" Td ("+pdfEscapeText(txt)+") Tj");
+                    cmds.push("0 0 Td");
+                    x+=cw;
+                }
+                current.push(cmds.join("\n"));
+                y-=h;
             }
-            var fontObj=3+pages.length*2; objects[fontObj]='<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>';
-            var pdf='%PDF-1.4\n%âãÏÓ\n', offsets=[0];
-            for(var oi=1;oi<objects.length;oi++){offsets[oi]=pdf.length;pdf+=oi+' 0 obj\n'+objects[oi]+'\nendobj\n';}
-            var xref=pdf.length; pdf+='xref\n0 '+objects.length+'\n0000000000 65535 f \n';
-            for(var xo=1;xo<objects.length;xo++) pdf+=String(offsets[xo]).padStart(10,'0')+' 00000 n \n';
-            pdf+='trailer\n<< /Size '+objects.length+' /Root 1 0 R >>\nstartxref\n'+xref+'\n%%EOF';
-            var blob=new Blob([pdf],{type:'application/pdf'}), a=document.createElement('a'); a.href=URL.createObjectURL(blob);a.download=filename;document.body.appendChild(a);a.click();
+            function drawTitleBlock() {
+                current.push("0 g /F1 15 Tf "+margin+" "+(H-27)+" Td ("+pdfEscapeText(title)+") Tj");
+                current.push("0 g /F1 9 Tf "+margin+" "+(H-47)+" Td ("+pdfEscapeText("Project: "+project+(date ? "    Date: "+date : ""))+") Tj");
+                y=H-68;
+            }
+
+            addPage(); drawTitleBlock();
+            drawRow(headers, true, false);
+            rows.forEach(function(r){ drawRow(r, false, false); });
+            (footerRows||[]).forEach(function(r){ drawRow(r, false, true); });
+
+            /* Visible BTTOTEK website footer on every PDF page. */
+            for (var fi = 0; fi < pages.length; fi++) {
+                pages[fi].push("0 g /F1 8 Tf "+margin+" 18 Td (BTTOTEK Website: www.bttotek.in) Tj");
+            }
+
+            /* Visible clickable website hyperlink. */
+            var objects=[], pageRefs=[], contentRefs=[];
+            var pageCount=pages.length;
+            objects[1]="<< /Type /Catalog /Pages 2 0 R >>";
+            for(var i=0;i<pageCount;i++){
+                pageRefs.push((3+i*3)+" 0 R");
+                contentRefs.push((4+i*3)+" 0 R");
+            }
+            objects[2]="<< /Type /Pages /Kids ["+pageRefs.join(" ")+"] /Count "+pageCount+" >>";
+            for(var pi=0;pi<pageCount;pi++){
+                var body="BT\n";
+                body+=pages[pi].join("\n")+"\nET\n";
+                objects[3+pi*3]="<< /Type /Page /Parent 2 0 R /MediaBox [0 0 "+W+" "+H+"] /Resources << /Font << /F1 "+(3+pageCount*3)+" 0 R >> >> /Contents "+(4+pi*3)+" 0 R /Annots ["+(5+pi*3)+" 0 R] >>";
+                objects[4+pi*3]="<< /Length "+body.length+" >>\nstream\n"+body+"endstream";
+                /* Visible footer text above is also a one-click PDF hyperlink. */
+                objects[5+pi*3]="<< /Type /Annot /Subtype /Link /Rect ["+margin+" 12 "+(margin+180)+" 30] /Border [0 0 0] /A << /S /URI /URI (https://www.bttotek.in/) >> >>";
+            }
+            var fontObj=3+pageCount*3;
+            objects[fontObj]="<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>";
+            var pdf="%PDF-1.4\n%âãÏÓ\n", offsets=[0];
+            for(var oi=1;oi<objects.length;oi++){ offsets[oi]=pdf.length; pdf+=oi+" 0 obj\n"+objects[oi]+"\nendobj\n"; }
+            var xref=pdf.length;
+            pdf+="xref\n0 "+objects.length+"\n0000000000 65535 f \n";
+            for(var xo=1;xo<objects.length;xo++) pdf+=String(offsets[xo]).padStart(10,"0")+" 00000 n \n";
+            pdf+="trailer\n<< /Size "+objects.length+" /Root 1 0 R >>\nstartxref\n"+xref+"\n%%EOF";
+            var blob=new Blob([pdf],{type:"application/pdf"}), a=document.createElement("a");
+            a.href=URL.createObjectURL(blob); a.download=filename; document.body.appendChild(a); a.click();
             setTimeout(function(){URL.revokeObjectURL(a.href);document.body.removeChild(a);},1000);
         }
+
         function exportBbsPdf(){
-            var proj=(document.getElementById('projectName')?.value||'NEW PROJECT').trim(), date=document.getElementById('reportDate')?.value||'';
-            var lines=['BTTOTEK - BBS REPORT','Website: https://www.bttotek.in/','BTTOTEK Civil Engineering & Construction Tools','Project: '+proj+(date?' | Date: '+date:''),'','Sl | Description | Dia | Span(mm) | Spacing(mm) | Members | Bars | Cut(mm) | Length(m)'];
-            var weights={8:.395,10:.617,12:.890,16:1.580,20:2.470,25:3.850,32:6.310,40:9.860},totals={8:0,10:0,12:0,16:0,20:0,25:0,32:0,40:0},kg=0,n=1;
-            bbsData.forEach(function(item){if(item.type==='HEADING'){lines.push('--- '+item.text+' ---');return;}var len=Number(item.totalLength)||0;if(totals[item.dia]!==undefined)totals[item.dia]+=len;lines.push(n+++' | '+item.desc+' | '+item.dia+' | '+(item.clearSpan||'-')+' | '+(item.spacing||'-')+' | '+item.noMembers+' | '+Math.ceil(Number(item.noBars)||0)+' | '+item.cutLength+' | '+len);});
-            lines.push('','DIAMETER TOTALS / WEIGHT'); Object.keys(totals).forEach(function(d){var w=totals[d]*weights[d];kg+=w;if(totals[d]>0)lines.push(d+'mm: '+totals[d].toFixed(2)+' m | '+w.toFixed(2)+' Kg');}); lines.push('Net Steel Weight: '+kg.toFixed(2)+' Kg','Website: https://www.bttotek.in/','BTTOTEK - Civil Engineering & Construction Tools');
-            buildSimplePdf(lines,proj.replace(/[^a-z0-9_-]+/gi,'_')+'_BBS_Report.pdf');
+            var proj=(document.getElementById("projectName")?.value||"NEW PROJECT").trim().toUpperCase();
+            var date=formatReportDate(document.getElementById("reportDate")?.value||"");
+            var headers=["Sl No","Description","Dia","Clear Span (mm)","Spacing (mm)","Members","Bars","Cut Length (mm)","Total Length (m)","8mm","10mm","12mm","16mm","20mm","25mm","32mm","40mm"];
+            var rows=[], totals={8:0,10:0,12:0,16:0,20:0,25:0,32:0,40:0};
+            var weights={8:.395,10:.617,12:.890,16:1.580,20:2.470,25:3.850,32:6.310,40:9.860};
+            var diaList=[8,10,12,16,20,25,32,40], kg=0, n=1;
+            bbsData.forEach(function(item){
+                if(item.type==="HEADING"){
+                    rows.push(["--- "+item.text+" ---","","","","","","","","","","","","","","","",""]);
+                    return;
+                }
+                var len=Number(item.totalLength)||0;
+                if(totals[item.dia]!==undefined) totals[item.dia]+=len;
+                var diaCols=diaList.map(function(d){ return Number(item.dia)===d ? len.toFixed(3) : "0"; });
+                rows.push([n++,item.desc,item.dia,item.clearSpan||"-",item.spacing||"-",item.noMembers,
+                    Math.ceil(Number(item.noBars)||0),item.cutLength,len.toFixed(3)].concat(diaCols));
+            });
+            var totalLenRow=["","Total Length (m)","","","","","","","-"];
+            diaList.forEach(function(d){ totalLenRow.push(totals[d].toFixed(2)); });
+            var weightRow=["","Weight (Kg)","","","","","","","-"];
+            diaList.forEach(function(d){ var w=totals[d]*weights[d]; kg+=w; weightRow.push(w.toFixed(2)); });
+            var footer=[
+                totalLenRow,
+                weightRow,
+                ["","Net Project Summary:","","","","","","",kg.toFixed(2)+" Kg",(kg/1000).toFixed(4)+" M.T.","","","","","","",""]
+            ];
+            makePdfTableDocument("BAR BENDING SCHEDULE",proj,date,headers,rows,footer,
+                proj.replace(/[^a-z0-9_-]+/gi,"_")+"_BBS_Report.pdf",
+                [28,92,28,62,68,42,34,60,50,47,47,47,47,47,47,47,47]);
         }
+
         function exportMeasurementPdf(){
-            var title=document.getElementById('mmSheetTitle')?.value||'MEASUREMENT SHEET',pName=document.getElementById('mmProjectName')?.value||'NEW SITE',date=document.getElementById('mmPeriodDate')?.value||'';
-            var lines=['BTTOTEK - MEASUREMENT SHEET','Website: https://www.bttotek.in/','BTTOTEK Civil Engineering & Construction Tools','Project: '+pName+(date?' | Period: '+date:''),'Title: '+title,'','Sr | Description | Unit | NOS1 | NOS2 | L | B | D | QTY']; var total=0;
-            masterMeasData.forEach(function(m,i){total+=Number(m.qty)||0;lines.push((i+1)+' | '+m.desc+' | '+m.unit+' | '+m.nos1+' | '+m.nos2+' | '+m.l+' | '+m.b+' | '+m.d+' | '+m.qty);});
-            lines.push('','Total Quantity: '+total.toFixed(3),'Website: https://www.bttotek.in/','BTTOTEK - Civil Engineering & Construction Tools');
-            buildSimplePdf(lines,pName.replace(/[^a-z0-9_-]+/gi,'_')+'_Measurement_Sheet.pdf');
+            var title=document.getElementById("mmSheetTitle")?.value||"MEASUREMENT SHEET";
+            var pName=document.getElementById("mmProjectName")?.value||"NEW SITE";
+            var date=formatReportDate(document.getElementById("mmPeriodDate")?.value||"");
+            var headers=["Sr.No.","Description","Unit","NOS 1","NOS 2","L","B","D","QTY"];
+            var rows=[], total=0;
+            masterMeasData.forEach(function(m,i){
+                var q=Number(m.qty)||0; total+=q;
+                rows.push([i+1,m.desc,m.unit,m.nos1,m.nos2,m.l||"",m.b||"",m.d||"",q]);
+            });
+            var footer=[
+                ["","","","","","","","Total =",total.toFixed(3)]
+            ];
+            makePdfTableDocument("MASTER MEASUREMENT SHEET",pName.toUpperCase(),date,headers,rows,footer,
+                pName.replace(/[^a-z0-9_-]+/gi,"_")+"_Measurement_Sheet.pdf",
+                [40,230,60,58,58,65,65,65,85]);
         }
+
         function bbsAddNewFromLiveSheet(){switchTab('tab2');document.getElementById('btn-tab2')?.scrollIntoView({behavior:'smooth',block:'center'});}
         function measurementAddNewFromLiveSheet(){switchMasterMeasTab('mmTab2');document.getElementById('btn-mmTab2')?.scrollIntoView({behavior:'smooth',block:'center'});}
 
@@ -1217,7 +1329,7 @@
                 '.summary-val { font-weight: bold; border: 0.5pt solid #000000; }' +
                 '.grand-total { font-weight: bold; background-color: #dcfce7; color: #000000; font-size: 11pt; height: 30px; border: 0.5pt solid #000000; }' +
                 '</style></head><body>' +
-                '<table><thead><tr><th colspan="17" class="main-title">BTTOTEK - Civil Engineering & Construction Tools</th></tr>' + '<tr><th colspan="17" style="font-size:11pt; font-weight:bold; border:0.5pt solid #000000;">Website: https://www.bttotek.in/</th></tr>' + '<tr><th colspan="17" class="main-title">' + headerTitle + '</th></tr>' +
+                '<table><thead><tr><th colspan="17" class="main-title">BAR BENDING SCHEDULE</th></tr>' + '<tr><th colspan="17" style="font-size:11pt; font-weight:bold; border:0.5pt solid #000000;">Project: ' + projName + (dVal ? ' | Date: ' + formatReportDate(dVal) : '') + '</th></tr>' +
                 '<tr class="header-row"><th>Sl No</th><th>Description</th><th>Dia</th><th>Clear Span (mm)</th><th>Spacing (mm)</th><th>Members</th><th>Bars</th><th>Cut Length (mm)</th><th>Total Length (m)</th><th>8mm</th><th>10mm</th><th>12mm</th><th>16mm</th><th>20mm</th><th>25mm</th><th>32mm</th><th>40mm</th></tr></thead><tbody>';
 
             var weights = {8:0.395, 10:0.617, 12:0.890, 16:1.580, 20:2.470, 25:3.850, 32:6.310, 40:9.860};
@@ -1251,7 +1363,7 @@
             }
             htmlData += '</tr>';
             var grandTotalMT = grandTotalKg / 1000;
-            htmlData += '<tr class="grand-total"><td colspan="5" style="text-align:left; border: 0.5pt solid #000000;">Net Summary:</td><td colspan="4" style="border: 0.5pt solid #000000;">' + grandTotalKg.toFixed(2) + ' Kg</td><td colspan="8" style="border: 0.5pt solid #000000;">' + grandTotalMT.toFixed(4) + ' M.T.</td></tr><tr><td colspan="17" style="font-weight:bold; border:0.5pt solid #000000;">BTTOTEK | Website: https://www.bttotek.in/ | Civil Engineering & Construction Tools</td></tr></tbody></table>\n    <!-- Native AdMob safe area.\n         Real AdMob BannerView is added by Android Studio/native Android code.\n         No HTML ad network code is used here. -->\n    <div class="native-ad-safe-area" aria-label="Advertisement">\n        <span class="ad-label">Advertisement</span>\n        <div class="ad-host" id="nativeAdHost"></div>\n    </div>\n\n</body></html>';
+            htmlData += '<tr class="grand-total"><td colspan="5" style="text-align:left; border: 0.5pt solid #000000;">Net Summary:</td><td colspan="4" style="border: 0.5pt solid #000000;">' + grandTotalKg.toFixed(2) + ' Kg</td><td colspan="8" style="border: 0.5pt solid #000000;">' + grandTotalMT.toFixed(4) + ' M.T.</td></tr><tr><td colspan="17" style="border:none;height:24px;padding:6px;text-align:left;"><a href="https://www.bttotek.in/" title="Open BTTOTEK Website" aria-label="BTTOTEK Website" style="font-weight:bold;color:#1d4ed8;text-decoration:underline;">BTTOTEK Website: www.bttotek.in</a></td></tr></tbody></table>\n    <!-- Native AdMob safe area.\n         Real AdMob BannerView is added by Android Studio/native Android code.\n         No HTML ad network code is used here. -->\n    <div class="native-ad-safe-area" aria-label="Advertisement">\n        <span class="ad-label">Advertisement</span>\n        <div class="ad-host" id="nativeAdHost"></div>\n    </div>\n\n</body></html>';
 
             var base64 = btoa(unescape(encodeURIComponent(htmlData))), a = document.createElement("a");
             a.href = "data:application/vnd.ms-excel;base64," + base64;
@@ -1485,7 +1597,7 @@
                 '</style></head><body>' +
                 '<table>' +
                 '<thead>' +
-                '<tr><th colspan="9" class="header-brand">BTTOTEK - Civil Engineering & Construction Tools</th></tr>' + '<tr><th colspan="9" class="header-brand">Website: https://www.bttotek.in/</th></tr>' + '<tr><th colspan="9" class="header-brand">' + displayTitle + '</th></tr>' +
+                '<tr><th colspan="9" class="header-brand">MASTER MEASUREMENT SHEET</th></tr>' + '<tr><th colspan="9" class="header-brand">Project: ' + pName.toUpperCase() + (date ? ' | Date: ' + formatReportDate(date) : '') + '</th></tr>' +
                 '<tr class="th-main">' +
                 '  <th>Sr.No.</th>' +
                 '  <th>Description</th>' +
@@ -1523,7 +1635,7 @@
                 '<td colspan="8" class="total-label">Total =</td>' +
                 '<td class="total-val">' + totalQty.toFixed(3) + '</td>' +
                 '</tr>' +
-                '<tr><td colspan="9" style="font-weight:bold; border:0.5pt solid #000000;">BTTOTEK | Website: https://www.bttotek.in/ | Civil Engineering & Construction Tools</td></tr>' +
+                '<tr><td colspan="9" style="border:none;height:24px;padding:6px;text-align:left;"><a href="https://www.bttotek.in/" title="Open BTTOTEK Website" aria-label="BTTOTEK Website" style="font-weight:bold;color:#1d4ed8;text-decoration:underline;">BTTOTEK Website: www.bttotek.in</a></td></tr>' +
                 '</tbody></table></body></html>';
 
             var base64 = btoa(unescape(encodeURIComponent(htmlData))), a = document.createElement("a");
