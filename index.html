@@ -428,6 +428,120 @@
            intercept taps intended for it. */
         .native-ad-safe-area .ad-host > * { pointer-events: auto; }
 
+
+        /* --- COMPREHENSIVE PRINTOUT & PDF FORMAT FIX --- */
+        @media print {
+            @page {
+                size: A4 landscape;
+                margin: 10mm 8mm;
+            }
+            html, body {
+                height: auto !important;
+                overflow: visible !important;
+                background: #ffffff !important;
+                color: #000000 !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .app-header, .sidebar-drawer, .sidebar-overlay, .bottom-nav-bar,
+            .floating-scroll-nav, .tabs-nav, .mm-sub-tabs-nav, .horiz-nav-scroll-wrapper,
+            .unit-nav-scroll-wrapper, .search-overlay-bar, .toast-notification-box,
+            .grid-actions-panel, .action-inline-group, button, .del-btn,
+            .native-ad-safe-area, .sidebar-ad-space, .modal-overlay,
+            th:last-child, td:last-child {
+                display: none !important;
+            }
+            .app-content-area {
+                padding-bottom: 0 !important;
+                overflow: visible !important;
+            }
+            .main-tab-panel {
+                display: block !important;
+            }
+            .main-tab-panel:not(.active) {
+                display: none !important;
+            }
+            .tab-content, .mm-sub-tab-content {
+                display: block !important;
+                padding: 0 !important;
+                background: #ffffff !important;
+            }
+            .tab-content:not(.active), .mm-sub-tab-content:not(.active) {
+                display: none !important;
+            }
+            .bbs-section-title {
+                background: #17365d !important;
+                color: #ffffff !important;
+                font-size: 16pt !important;
+                padding: 8px !important;
+                margin-bottom: 5px !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            #printHeaderContainer {
+                display: block !important;
+                margin-bottom: 10px !important;
+                border: 1pt solid #17365d !important;
+                padding: 6px 12px !important;
+                background: #f8fafc !important;
+                font-weight: bold !important;
+                font-size: 11pt !important;
+            }
+            .table-responsive {
+                max-height: none !important;
+                overflow: visible !important;
+                border: none !important;
+            }
+            table {
+                width: 100% !important;
+                min-width: 100% !important;
+                border-collapse: collapse !important;
+                font-size: 9pt !important;
+                page-break-inside: auto !important;
+            }
+            tr {
+                page-break-inside: avoid !important;
+                page-break-after: auto !important;
+            }
+            thead th {
+                background-color: #dbeafe !important;
+                color: #17365d !important;
+                font-weight: bold !important;
+                border: 0.8pt solid #64748b !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            td, th {
+                border: 0.6pt solid #64748b !important;
+                padding: 4px 6px !important;
+            }
+            .heading-row td {
+                background-color: #eaf2f8 !important;
+                color: #17365d !important;
+                font-weight: bold !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .grand-total, tr[style*="background:#dcfce7"], tr[style*="background-color: #dcfce7"] {
+                background-color: #dcfce7 !important;
+                color: #14532d !important;
+                font-weight: bold !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .section-exit-btn {
+                display: none !important;
+            }
+            .bttotek-print-footer {
+                display: block !important;
+                margin-top: 15px;
+                font-size: 9pt;
+                font-weight: bold;
+                color: #1d4ed8;
+                text-align: left;
+            }
+        }
+
 </style>
 
     <script>
@@ -1155,6 +1269,8 @@
            - Full live-sheet style table
            - BTTOTEK website branding only at the bottom
         */
+        
+        /* BTTOTEK MATCHING EXCEL-FORMAT PDF EXPORT ENGINE */
         function pdfEscapeText(text) {
             return String(text == null ? "" : text)
                 .replace(/\\/g, "\\\\")
@@ -1177,78 +1293,112 @@
             var p = String(value).split("-");
             return p.length === 3 ? p[2] + "/" + p[1] + "/" + p[0] : value;
         }
+
         function makePdfTableDocument(title, project, date, headers, rows, footerRows, filename, colWidths) {
-            /* Valid PDF 1.4 generator: graphics are outside BT/ET and all generated bytes are ASCII. */
-            var W=842,H=595,margin=22,usable=W-margin*2;
-            var widths=(colWidths&&colWidths.length)?colWidths.slice():headers.map(function(){return usable/headers.length;});
-            var sum=widths.reduce(function(a,b){return a+b;},0);
-            if(Math.abs(sum-usable)>0.5) widths=widths.map(function(w){return w*usable/sum;});
-            var pages=[], current=[], y=H-94;
-            var rowH=headers.length>12?18:21, fontSize=headers.length>12?5.8:7.0;
-            var dark=[0.10,0.22,0.40], head=[0.86,0.91,0.98], section=[0.91,0.95,1.00], total=[0.88,0.96,0.91], white=[1,1,1], border=[0.40,0.48,0.58];
-            function rgb(c,stroke){return c.map(function(v){return v.toFixed(3);}).join(' ')+(stroke?' RG':' rg');}
-            function addPage(){pages.push(current);current=[];y=H-94;}
-            function isSection(c){return c&&c[0]&&/^---/.test(String(c[0]));}
-            function textCmd(txt,size,x,ty,color,bold){
-                return rgb(color,false)+'\nBT\n/F1 '+size.toFixed(1)+' Tf\n1 0 0 1 '+x.toFixed(2)+' '+ty.toFixed(2)+' Tm\n('+pdfEscapeText(txt)+') Tj\nET';
+            var W = 842, H = 595, margin = 20, usable = W - margin * 2;
+            var widths = (colWidths && colWidths.length) ? colWidths.slice() : headers.map(function(){ return usable / headers.length; });
+            var sum = widths.reduce(function(a,b){ return a + b; }, 0);
+            if (Math.abs(sum - usable) > 0.5) widths = widths.map(function(w){ return w * usable / sum; });
+
+            var pages = [], current = [], y = H - 90;
+            var rowH = headers.length > 12 ? 18 : 21, fontSize = headers.length > 12 ? 6.0 : 7.2;
+
+            // Excel-matching Palette
+            var cTitleBg = [0.09, 0.21, 0.36];    // #17365d (Excel Main Title Dark Blue)
+            var cHeadBg = [0.86, 0.91, 0.98];     // #dbeafe (Excel Table Header Light Blue)
+            var cHeadText = [0.09, 0.21, 0.36];   // #17365d
+            var cSectionBg = [0.92, 0.95, 0.97];  // #eaf2f8 (Excel Heading Row)
+            var cNetBg = [0.86, 0.98, 0.90];      // #dcfce7 (Excel Net Summary Light Green)
+            var cNetText = [0.08, 0.32, 0.18];    // #14532d (Excel Net Summary Text)
+            var cWhite = [1, 1, 1];
+            var cBorder = [0.39, 0.45, 0.55];     // #64748b
+
+            function rgb(c, stroke) {
+                return c.map(function(v){ return v.toFixed(3); }).join(' ') + (stroke ? ' RG' : ' rg');
             }
-            function drawRow(cells,isHeader,isTotal){
-                if(y<52){addPage();drawHeaderRepeat();}
-                var x=margin, h=isHeader?28:(isSection(cells)?22:rowH);
-                var fill=isHeader?head:(isSection(cells)?section:(isTotal?total:white));
-                var cmd=rgb(fill,false)+'\n'+rgb(border,true)+' 0.55 w\n'+x.toFixed(2)+' '+(y-h).toFixed(2)+' '+usable.toFixed(2)+' '+h.toFixed(2)+' re B';
-                for(var c=0;c<cells.length;c++){
-                    var cw=widths[c]||40;
-                    if(c>0) cmd+='\n'+rgb(border,true)+' 0.45 w\n'+x.toFixed(2)+' '+(y-h).toFixed(2)+' m '+x.toFixed(2)+' '+y.toFixed(2)+' l S';
-                    var txt=pdfFitText(cells[c],cw-6,fontSize), tw=pdfTextWidth(txt,fontSize);
-                    var tx=x+Math.max(3,(cw-tw)/2), ty=y-(h/2)-(fontSize/3);
-                    var tc=(isHeader||isSection(cells))?dark:[0.08,0.10,0.14];
-                    cmd+='\n'+textCmd(txt,isHeader?fontSize+0.4:fontSize,tx,ty,tc,false);
-                    x+=cw;
+
+            function addPage() { pages.push(current); current = []; y = H - 90; }
+
+            function isSectionRow(cells) {
+                return cells && cells[0] && /^---/.test(String(cells[0]));
+            }
+
+            function textCmd(txt, size, x, ty, color, bold) {
+                return rgb(color, false) + '\nBT\n/F1 ' + size.toFixed(1) + ' Tf\n1 0 0 1 ' + x.toFixed(2) + ' ' + ty.toFixed(2) + ' Tm\n(' + pdfEscapeText(txt) + ') Tj\nET';
+            }
+
+            function drawRow(cells, isHeader, isTotalRow, isNetSummary) {
+                if (y < 48) { addPage(); drawHeaderRepeat(); }
+                var x = margin, h = isHeader ? 26 : (isSectionRow(cells) ? 22 : rowH);
+
+                var fill = isHeader ? cHeadBg : (isSectionRow(cells) ? cSectionBg : (isNetSummary ? cNetBg : (isTotalRow ? [0.95, 0.96, 0.98] : cWhite)));
+                var cmd = rgb(fill, false) + '\n' + rgb(cBorder, true) + ' 0.55 w\n' + x.toFixed(2) + ' ' + (y - h).toFixed(2) + ' ' + usable.toFixed(2) + ' ' + h.toFixed(2) + ' re B';
+
+                for (var c = 0; c < cells.length; c++) {
+                    var cw = widths[c] || 40;
+                    if (c > 0) cmd += '\n' + rgb(cBorder, true) + ' 0.45 w\n' + x.toFixed(2) + ' ' + (y - h).toFixed(2) + ' m ' + x.toFixed(2) + ' ' + y.toFixed(2) + ' l S';
+                    var txt = pdfFitText(cells[c], cw - 5, fontSize);
+                    var tw = pdfTextWidth(txt, fontSize);
+                    var tx = x + Math.max(3, (cw - tw) / 2);
+                    var ty = y - (h / 2) - (fontSize / 3);
+                    var tc = isHeader ? cHeadText : (isSectionRow(cells) ? cHeadText : (isNetSummary ? cNetText : [0.08, 0.10, 0.14]));
+                    cmd += '\n' + textCmd(txt, isHeader ? fontSize + 0.3 : fontSize, tx, ty, tc, isHeader || isNetSummary);
+                    x += cw;
                 }
-                current.push(cmd); y-=h;
+                current.push(cmd); y -= h;
             }
-            function drawTitleBlock(){
-                current.push(rgb(dark,false)+'\n'+rgb(dark,true)+' 0.6 w\n'+margin+' '+(H-38)+' '+usable+' 25 re B');
-                current.push(textCmd(title,14,margin+8,H-31,white,true));
-                current.push(rgb([0.96,0.98,1],false)+'\n'+rgb(border,true)+' 0.5 w\n'+margin+' '+(H-58)+' '+usable+' 20 re B');
-                current.push(textCmd('Project: '+project+(date?'    Date: '+date:''),8.5,margin+8,H-51,[0.10,0.14,0.20],false));
-                y=H-72;
+
+            function drawTitleBlock() {
+                current.push(rgb(cTitleBg, false) + '\n' + rgb(cTitleBg, true) + ' 0.6 w\n' + margin + ' ' + (H - 38) + ' ' + usable + ' 25 re B');
+                current.push(textCmd(title, 14, margin + 10, H - 31, cWhite, true));
+                current.push(rgb([0.97, 0.98, 0.99], false) + '\n' + rgb(cBorder, true) + ' 0.5 w\n' + margin + ' ' + (H - 58) + ' ' + usable + ' 20 re B');
+                current.push(textCmd('Project: ' + project + (date ? '    Date: ' + date : ''), 8.5, margin + 10, H - 51, [0.09, 0.14, 0.22], false));
+                y = H - 68;
             }
-            function drawHeaderRepeat(){drawRow(headers,true,false);}
-            current=[]; y=H-94; drawTitleBlock(); drawRow(headers,true,false);
-            rows.forEach(function(r){drawRow(r,false,false);});
-            (footerRows||[]).forEach(function(r){drawRow(r,false,true);});
-            if(current.length) pages.push(current);
-            for(var fi=0;fi<pages.length;fi++){
-                pages[fi].push(rgb([0.96,0.98,1],false)+'\n'+rgb(border,true)+' 0.45 w\n'+margin+' 12 '+usable+' 18 re B');
-                pages[fi].push(textCmd('BTTOTEK Website: www.bttotek.in',7.5,margin+7,18,[0.10,0.30,0.65],false));
+
+            function drawHeaderRepeat() { drawRow(headers, true, false, false); }
+
+            current = []; y = H - 90; drawTitleBlock(); drawRow(headers, true, false, false);
+            rows.forEach(function(r){ drawRow(r, false, false, false); });
+            (footerRows || []).forEach(function(r, idx){
+                var isNet = idx === footerRows.length - 1;
+                drawRow(r, false, true, isNet);
+            });
+
+            if (current.length) pages.push(current);
+
+            for (var fi = 0; fi < pages.length; fi++) {
+                pages[fi].push(rgb([0.96, 0.98, 1], false) + '\n' + rgb(cBorder, true) + ' 0.45 w\n' + margin + ' 12 ' + usable + ' 18 re B');
+                pages[fi].push(textCmd('BTTOTEK Website: www.bttotek.in', 7.5, margin + 7, 18, [0.10, 0.30, 0.65], false));
             }
-            var objects=[],pageRefs=[],contentRefs=[],pageCount=pages.length;
-            objects[1]='<< /Type /Catalog /Pages 2 0 R >>';
-            for(var i=0;i<pageCount;i++){pageRefs.push((3+i*3)+' 0 R');contentRefs.push((4+i*3)+' 0 R');}
-            objects[2]='<< /Type /Pages /Kids ['+pageRefs.join(' ')+'] /Count '+pageCount+' >>';
-            for(var pi=0;pi<pageCount;pi++){
-                var body=pages[pi].join('\n')+'\n';
-                objects[3+pi*3]='<< /Type /Page /Parent 2 0 R /MediaBox [0 0 '+W+' '+H+'] /Resources << /Font << /F1 '+(3+pageCount*3)+' 0 R >> >> /Contents '+(4+pi*3)+' 0 R /Annots ['+(5+pi*3)+' 0 R] >>';
-                objects[4+pi*3]='<< /Length '+body.length+' >>\nstream\n'+body+'endstream';
-                objects[5+pi*3]='<< /Type /Annot /Subtype /Link /Rect ['+margin+' 12 '+(margin+210)+' 30] /Border [0 0 0] /A << /S /URI /URI (https://www.bttotek.in/) >> >>';
+
+            var objects = [], pageRefs = [], contentRefs = [], pageCount = pages.length;
+            objects[1] = '<< /Type /Catalog /Pages 2 0 R >>';
+            for (var i = 0; i < pageCount; i++) { pageRefs.push((3 + i * 3) + ' 0 R'); contentRefs.push((4 + i * 3) + ' 0 R'); }
+            objects[2] = '<< /Type /Pages /Kids [' + pageRefs.join(' ') + '] /Count ' + pageCount + ' >>';
+            for (var pi = 0; pi < pageCount; pi++) {
+                var body = pages[pi].join('\n') + '\n';
+                objects[3 + pi * 3] = '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ' + W + ' ' + H + '] /Resources << /Font << /F1 ' + (3 + pageCount * 3) + ' 0 R >> >> /Contents ' + (4 + pi * 3) + ' 0 R /Annots [' + (5 + pi * 3) + ' 0 R] >>';
+                objects[4 + pi * 3] = '<< /Length ' + body.length + ' >>\nstream\n' + body + 'endstream';
+                objects[5 + pi * 3] = '<< /Type /Annot /Subtype /Link /Rect [' + margin + ' 12 ' + (margin + 210) + ' 30] /Border [0 0 0] /A << /S /URI /URI (https://www.bttotek.in/) >> >>';
             }
-            var fontObj=3+pageCount*3;
-            objects[fontObj]='<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>';
-            /* ASCII-only header keeps xref byte offsets correct in UTF-8 Blob construction. */
-            var pdf='%PDF-1.4\n%1234\n',offsets=[0];
-            for(var oi=1;oi<objects.length;oi++){offsets[oi]=pdf.length;pdf+=oi+' 0 obj\n'+objects[oi]+'\nendobj\n';}
-            var xref=pdf.length;
-            pdf+='xref\n0 '+objects.length+'\n0000000000 65535 f \n';
-            for(var xo=1;xo<objects.length;xo++) pdf+=String(offsets[xo]).padStart(10,'0')+' 00000 n \n';
-            pdf+='trailer\n<< /Size '+objects.length+' /Root 1 0 R >>\nstartxref\n'+xref+'\n%%EOF';
-            var blob=new Blob([pdf],{type:'application/pdf'}),a=document.createElement('a');
-            a.href=URL.createObjectURL(blob);a.download=filename;document.body.appendChild(a);a.click();
-            setTimeout(function(){URL.revokeObjectURL(a.href);document.body.removeChild(a);},1000);
+            var fontObj = 3 + pageCount * 3;
+            objects[fontObj] = '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>';
+
+            var pdf = '%PDF-1.4\n%1234\n', offsets = [0];
+            for (var oi = 1; oi < objects.length; oi++) { offsets[oi] = pdf.length; pdf += oi + ' 0 obj\n' + objects[oi] + '\nendobj\n'; }
+            var xref = pdf.length;
+            pdf += 'xref\n0 ' + objects.length + '\n0000000000 65535 f \n';
+            for (var xo = 1; xo < objects.length; xo++) pdf += String(offsets[xo]).padStart(10, '0') + ' 00000 n \n';
+            pdf += 'trailer\n<< /Size ' + objects.length + ' /Root 1 0 R >>\nstartxref\n' + xref + '\n%%EOF';
+
+            var blob = new Blob([pdf], {type: 'application/pdf'}), a = document.createElement('a');
+            a.href = URL.createObjectURL(blob); a.download = filename; document.body.appendChild(a); a.click();
+            setTimeout(function(){ URL.revokeObjectURL(a.href); document.body.removeChild(a); }, 1000);
         }
 
-        function exportBbsPdf(){
+
+function exportBbsPdf(){
             var proj=(document.getElementById("projectName")?.value||"NEW PROJECT").trim().toUpperCase();
             var date=formatReportDate(document.getElementById("reportDate")?.value||"");
             var headers=["Sl No","Description","Dia","Clear Span (mm)","Spacing (mm)","Members","Bars","Cut Length (mm)","Total Length (m)","8mm","10mm","12mm","16mm","20mm","25mm","32mm","40mm"];
