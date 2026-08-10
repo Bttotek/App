@@ -70,7 +70,7 @@
         }
         .header-left { display: flex; align-items: center; gap: 12px; }
         .menu-hamburger { font-size: 22px; background: none; border: none; color: #ffffff; cursor: pointer; padding: 0; outline: none; }
-        .header-title { font-size: 18px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; }
+        .header-title { font-size: 15px; font-weight: 800; letter-spacing: 0.6px; cursor: pointer; text-transform: uppercase; }
         .header-right { display: flex; align-items: center; gap: 10px; }
         .header-theme-btn, .header-search-btn { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; }
 
@@ -218,6 +218,9 @@
         .bbs-full-container { background: var(--bg-container); padding: 0; width: 100%; box-sizing: border-box; }
         
         /* CLEAR SECTION HEADING STRIP */
+        /* Global tool-page heading removal: tool name is shown only in the dark top header. */
+        .bbs-section-title { display: none !important; }
+
         .bbs-section-title {
             font-size: 13px;
             font-weight: 800;
@@ -639,6 +642,8 @@
         function setAppLanguage(lang) {
             currentAppLang = lang;
             var t = langTranslations[lang] || langTranslations.en;
+            try { localStorage.setItem('currentAppLang', lang); } catch(e) {}
+            updateCurrentToolHeader('main-tab-bbs');
 
             var titleEl = document.querySelector('.bbs-section-title');
             if(titleEl) titleEl.innerText = t.title_bbs;
@@ -716,6 +721,13 @@
             if (typeof calcSteelUnitWeight === 'function') {
                 calcSteelUnitWeight();
             }
+            try {
+                var savedLang = localStorage.getItem('currentAppLang');
+                if(savedLang && langTranslations[savedLang]) setAppLanguage(savedLang);
+                else updateCurrentToolHeader('main-tab-bbs');
+            } catch(e) {
+                updateCurrentToolHeader('main-tab-bbs');
+            }
         };
 
         function openTopSearchBar() {
@@ -751,11 +763,19 @@
 
         function toggleSidebarFolder(folderId) {
             var f = document.getElementById(folderId);
-            if(f) {
-                var isOpen = f.style.display === 'block';
-                closeAllSidebarFolders();
-                f.style.display = isOpen ? 'none' : 'block';
+            if(!f) return;
+            var isOpen = f.style.display === 'block';
+
+            // Nested folders (for example Settings > Language) must not
+            // close their parent folder. Close only sibling folders at
+            // the same level, then toggle the requested folder.
+            var parent = f.parentElement;
+            if(parent) {
+                parent.querySelectorAll(':scope > .sidebar-folder-container').forEach(function(folder){
+                    if(folder !== f) folder.style.display = 'none';
+                });
             }
+            f.style.display = isOpen ? 'none' : 'block';
         }
 
         function toggleTheme(mode) {
@@ -1548,10 +1568,24 @@ function exportBbsPdf(){
             
             document.getElementById(tabId).classList.add('active');
             if(btnElement) btnElement.classList.add('active');
+            updateCurrentToolHeader(tabId);
+        }
+
+        function updateCurrentToolHeader(tabId) {
+            var titleMap = {
+                'main-tab-bbs': 'BAR BENDING SCHEDULE',
+                'main-tab-calculator': 'CALCULATORS',
+                'main-tab-measurement': 'MEASUREMENT SHEET',
+                'main-tab-unit': 'UNIT CONVERTER',
+                'main-tab-web': 'WEB RESOURCES'
+            };
+            var el = document.getElementById('currentToolHeader');
+            if(el) el.innerText = titleMap[tabId] || 'TOOLS';
         }
 
         function loadHomePage() {
             switchMainShellTab('main-tab-bbs', document.querySelectorAll('.bottom-nav-item')[0]);
+            updateCurrentToolHeader('main-tab-bbs');
             const drawer = document.getElementById('sidebarDrawer');
             if (drawer.classList.contains('active')) { toggleSidebar(); }
         }
@@ -2095,7 +2129,7 @@ function exportBbsPdf(){
 <header class="app-header">
     <div class="header-left">
         <button class="menu-hamburger" onclick="toggleSidebar()">☰</button>
-        <span class="header-title" onclick="loadHomePage()">BBS Calc</span>
+        <span class="header-title" id="currentToolHeader" onclick="loadHomePage()">BAR BENDING SCHEDULE</span>
     </div>
     <div class="header-right">
         <button class="header-search-btn" onclick="openTopSearchBar()">🔍 Search</button>
@@ -2186,9 +2220,6 @@ function exportBbsPdf(){
         <div id="toastNoticeDock" class="toast-notification-box"></div>
 
         <div class="bbs-full-container">
-            <!-- ANIMATED TOOL TITLE HEADER -->
-            <div class="bbs-section-title">BAR BENDING SCHEDULE</div>
-
             <div class="tabs-nav">
                 <div id="btn-tab1" class="tab-btn active" tabindex="15" onclick="switchTab('tab1')">1. PROJECT INIT</div>
                 <div id="btn-tab2" class="tab-btn" tabindex="16" onclick="switchTab('tab2')">2. INPUT BAR DATA</div>
