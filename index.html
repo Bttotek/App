@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<link rel="manifest" href="manifest.json">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="manifest" href="manifest.json">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<title>Civil Engine BBS Calc - Construction & Quantity Estimator</title>
-<meta name="description" content="All-in-one Civil Engineering & Quantity Estimator: Steel Weight Calculator, Bar Bending Schedule (BBS), Concrete Mix Ratio, Brickwork & Plaster Estimator, Shuttering, Tiles, and Quality Control Dashboard.">
-<meta name="keywords" content="Steel Weight Calculator, Bar Bending Schedule Calculator, BBS Calc, Concrete Calculator, Brickwork Calculator, Plaster Calculator, Construction Cost Estimator, Civil Engineering Calculator, Shuttering Calculator, AAC Block Estimator, Tile Calculator, Cement Sand Aggregate Quantity">
-<meta name="author" content="Civil Engine BBS Calc">
+    <title>Civil Engine BBS Calc v2.2 - Construction & Quantity Estimator</title>
+    <meta name="description" content="All-in-one Civil Engineering & Quantity Estimator: Steel Weight Calculator, Bar Bending Schedule (BBS), Concrete Mix Ratio, Brickwork & Plaster Estimator, Shuttering, Tiles, and Quality Control Dashboard.">
+    <meta name="keywords" content="Steel Weight Calculator, Bar Bending Schedule Calculator, BBS Calc, Concrete Calculator, Brickwork Calculator, Plaster Calculator, Construction Cost Estimator, Civil Engineering Calculator, Shuttering Calculator, AAC Block Estimator, Tile Calculator, Cement Sand Aggregate Quantity">
+    <meta name="author" content="Civil Engine BBS Calc">
+    <meta name="app-version" content="2.2.0">
 
     <style>
         :root {
@@ -50,11 +51,11 @@
             padding: 0;
             overflow: hidden;
         }
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
-            background-color: var(--bg-body); 
-            color: var(--text-main); 
-            transition: background 0.2s, color 0.2s; 
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            transition: background 0.2s, color 0.2s;
             display: flex;
             flex-direction: column;
         }
@@ -168,46 +169,46 @@
         .sidebar-app-details h3 { margin: 0; font-size: 15px; font-weight: 700; color: var(--text-main); }
         .sidebar-app-details p { margin: 2px 0 0 0; font-size: 11px; color: var(--text-muted); }
         .sidebar-menu-list { padding: 8px; list-style: none; margin: 0; flex-grow: 1; overflow-y: auto; }
-        
-        .sidebar-folder-btn { 
-            width: 100%; 
-            padding: 10px 12px; 
-            border: none; 
-            background: transparent; 
-            text-align: left; 
-            font-size: 12px; 
-            font-weight: 700; 
+
+        .sidebar-folder-btn {
+            width: 100%;
+            padding: 10px 12px;
+            border: none;
+            background: transparent;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 700;
             text-transform: uppercase;
-            color: var(--text-muted); 
-            cursor: pointer; 
-            margin: 4px 0; 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
+            color: var(--text-muted);
+            cursor: pointer;
+            margin: 4px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             border-bottom: 1px solid var(--border-color);
         }
-        .sidebar-folder-container { 
-            display: none; 
-            background: transparent; 
-            padding: 2px 6px; 
-            margin-bottom: 4px; 
+        .sidebar-folder-container {
+            display: none;
+            background: transparent;
+            padding: 2px 6px;
+            margin-bottom: 4px;
             border-left: 2px solid var(--primary-color);
         }
         .sidebar-menu-list li a { display: flex; align-items: center; gap: 10px; padding: 10px 12px; color: var(--text-main); text-decoration: none; font-weight: 600; font-size: 13px; border-radius: 6px; margin-bottom: 2px; }
         .sidebar-menu-list li a:hover { background: rgba(0, 168, 132, 0.08); color: var(--primary-color); }
 
-        .bottom-nav-bar { 
-            position: fixed; 
-            bottom: 0; 
-            left: 0; 
-            width: 100%; 
-            background: var(--bg-card); 
+        .bottom-nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--bg-card);
             border-top: 1px solid var(--border-color);
-            display: flex; 
-            justify-content: space-around; 
-            align-items: center; 
-            padding: 6px 0; 
-            z-index: 1000; 
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 6px 0;
+            z-index: 1000;
             box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.06);
         }
         .bottom-nav-item { color: var(--text-muted); text-decoration: none; font-size: 11px; font-weight: 600; display: flex; flex-direction: column; align-items: center; flex: 1; padding: 4px 0; border: none; background: none; cursor: pointer; }
@@ -227,13 +228,13 @@
         .bbs-section-title { display: none !important; }
 
         .toast-notification-box { display: none; position: fixed; top: 16px; left: 50%; transform: translateX(-50%); background: #1e293b; color: #ffffff; padding: 10px 20px; border-radius: 6px; font-weight: 600; font-size: 12px; z-index: 9999999; border-left: 3px solid var(--primary-color); box-shadow: var(--shadow-lg); }
-        
+
         .tabs-nav { display: flex; background: var(--bg-card); border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 999; box-shadow: var(--shadow-sm); }
         .tab-btn { background: transparent; border: none; border-bottom: 2px solid transparent; padding: 12px 4px; font-weight: 600; font-size: 12px; color: var(--text-muted); cursor: pointer; flex: 1; text-align: center; border-radius: 0; }
         .tab-btn.active { color: var(--primary-color); border-bottom-color: var(--primary-color); font-weight: 700; }
         .tab-content { display: none; background: var(--bg-card); padding: 14px; margin: 10px; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); }
         .tab-content.active { display: block; }
-        
+
         .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; align-items: end; }
         .form-row-three-boxes { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; width: 100%; box-sizing: border-box; }
         .form-group { display: flex; flex-direction: column; width: 100%; box-sizing: border-box; margin-bottom: 8px; }
@@ -255,7 +256,7 @@
         .download-btn { background: #10b981; color: #ffffff; padding: 12px; font-size: 13px; text-transform: uppercase; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; box-shadow: var(--shadow-sm); }
         .copy-btn { background: #6366f1; color: #ffffff; padding: 12px; font-size: 13px; text-transform: uppercase; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; box-shadow: var(--shadow-sm); }
         .del-btn { background: #ef4444; color: #ffffff; padding: 4px 8px; font-size: 11px; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; box-shadow: var(--shadow-sm); }
-        
+
         .table-responsive { overflow-x: auto; overflow-y: auto; margin-top: 12px; border: 1px solid var(--border-color); border-radius: 6px; max-height: 380px; position: relative; box-shadow: var(--shadow-sm); }
         table { width: 100%; border-collapse: collapse; min-width: 1000px; font-size: 12px; background: var(--table-bg); color: var(--text-main); }
         thead tr:first-child th { position: sticky; top: 0; z-index: 102; background: #1e293b; color: #ffffff; }
@@ -266,7 +267,7 @@
         .heading-flex-layout { display: flex; justify-content: space-between; align-items: center; width: 100%; }
         .section-editable-text { flex-grow: 1; outline: none; cursor: text; }
         .section-exit-btn { background: #ef4444; color: #ffffff; border: none; border-radius: 4px; padding: 4px 8px; font-size: 11px; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-left: 15px; box-shadow: var(--shadow-sm); }
-        
+
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999999; align-items: center; justify-content: center; padding: 15px; box-sizing: border-box; backdrop-filter: blur(2px); }
         .modal-box { background: var(--bg-card); padding: 20px; border-radius: 8px; max-width: 500px; width: 100%; position: relative; color: var(--text-main); max-height: 90vh; overflow-y: auto; box-sizing: border-box; border: 1px solid var(--border-color); box-shadow: var(--shadow-lg); }
         .modal-close-btn { position: absolute; right: 15px; top: 15px; background: #ef4444; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-weight: bold; z-index: 10; box-shadow: var(--shadow-sm); }
@@ -395,7 +396,7 @@
     <script>
         var bbsData = [];
         var masterMeasData = [];
-        var activeDias = [8, 10, 12, 16, 20, 25, 32, 40]; 
+        var activeDias = [8, 10, 12, 16, 20, 25, 32, 40];
         var currentActiveProject = "NEW PROJECT";
         var logSearchQuery = "";
         var renameTargetEncoded = "";
@@ -610,7 +611,7 @@
             var dVal = document.getElementById('reportDate').value;
             if(dVal) textSummary += "Date: " + dVal + "\n";
             textSummary += "--------------------------------\n";
-            
+
             var validEntriesFound = false;
             var weights = {8:0.395, 10:0.617, 12:0.890, 16:1.580, 20:2.470, 25:3.850, 32:6.310, 40:9.860};
             var grandTotalKg = 0;
@@ -627,17 +628,17 @@
                 }
             }
             if(!validEntriesFound) return triggerToastNotification("The layout table is currently empty.");
-            
+
             textSummary += "\n--------------------------------\n";
             textSummary += "Net Project Summary: " + grandTotalKg.toFixed(2) + " Kg (" + (grandTotalKg/1000).toFixed(4) + " M.T.)\n";
-            
+
             var steelRate = parseFloat(document.getElementById('steelRatePerKg').value) || 0;
             if(steelRate > 0) {
                 var totalCost = grandTotalKg * steelRate;
                 textSummary += "Rate per Kg: INR " + steelRate + "\n";
                 textSummary += "Estimated Cost: INR " + totalCost.toLocaleString('en-IN', {maximumFractionDigits: 2}) + "\n";
             }
-            
+
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(textSummary).then(function() {
                     triggerToastNotification("Report copied successfully!");
@@ -670,15 +671,15 @@
             document.getElementById('z1Spacing').value = "";
             document.getElementById('z2Spacing').value = "";
             document.getElementById('z3Spacing').value = "";
-            
+
             currentActiveProject = "NEW PROJECT";
             var screenHeader = document.getElementById('liveProjectHeaderName');
             if(screenHeader) screenHeader.innerText = "📁 CURRENT SHEET LOG: NEW PROJECT";
-            
+
             resetModeToNewCanvas();
             bbsData = []; renderTable();
-            switchTab('tab1'); 
-            triggerToastNotification("All fields reset successfully!"); 
+            switchTab('tab1');
+            triggerToastNotification("All fields reset successfully!");
         }
 
         function checkAndResetForNewProject() {
@@ -691,10 +692,10 @@
         function handleSheetModeChange() { if(document.getElementById('projectSheetModeSelect').value === "OLD") { openModal('historyModal'); } else { bbsData = []; renderTable(); } }
         function switchTab(tId) { var cs = document.getElementsByClassName('tab-content'), bs = document.getElementsByClassName('tab-btn'); for (var i = 0; i < cs.length; i++) { cs[i].classList.remove('active'); bs[i].classList.remove('active'); } document.getElementById(tId).classList.add('active'); document.getElementById('btn-' + tId).classList.add('active'); }
 
-        function toggleModalSpacingMode() { 
-            var mode = document.getElementById('modalSpacingSelectMode').value; 
-            document.getElementById('modalSingleBoxWrapper').style.display = (mode === "L1" ? "block" : "none"); 
-            document.getElementById('modalTripleBoxWrapper').style.display = (mode === "L3" || mode === "L4" ? 'block' : 'none'); 
+        function toggleModalSpacingMode() {
+            var mode = document.getElementById('modalSpacingSelectMode').value;
+            document.getElementById('modalSingleBoxWrapper').style.display = (mode === "L1" ? "block" : "none");
+            document.getElementById('modalTripleBoxWrapper').style.display = (mode === "L3" || mode === "L4" ? 'block' : 'none');
         }
 
         function calculateAutoBarSpacingAndLength() {
@@ -782,13 +783,43 @@
             }
         }
 
+        function buySubscription() {
+            try {
+                if (window.AndroidShare && typeof window.AndroidShare.launchSubscription === 'function') {
+                    window.AndroidShare.launchSubscription();
+                    toggleSidebar();
+                    return;
+                }
+            } catch(e) { console.warn('Native subscription bridge failed:', e); }
+
+            var playUrl = 'https://play.google.com/store/apps/details?id=com.shiv.bbscalc';
+            try { window.open(playUrl, '_blank', 'noopener'); }
+            catch(e) { window.location.href = playUrl; }
+            triggerToastNotification('Opening subscription / app page...');
+        }
+
+        function exitApp() {
+            try {
+                if (window.AndroidShare && typeof window.AndroidShare.closeApp === 'function') {
+                    window.AndroidShare.closeApp();
+                    return;
+                }
+            } catch(e) { console.warn('Native exit bridge failed:', e); }
+
+            try { window.close(); } catch(e) {}
+            setTimeout(function(){
+                if (history.length > 1) history.back();
+                else triggerToastNotification('Exit is controlled by the Android app.');
+            }, 150);
+        }
+
         function openModal(mId) { closeAllModals(); safeModalToggle(mId, 'flex'); if(mId === 'historyModal') loadHistoryList(); }
-        
-        function closeAllModals() { 
-            safeModalToggle('infoModal', 'none'); 
-            safeModalToggle('bbsAutoCalcModal', 'none'); 
-            safeModalToggle('historyModal', 'none'); 
-            safeModalToggle('renameModal', 'none'); 
+
+        function closeAllModals() {
+            safeModalToggle('infoModal', 'none');
+            safeModalToggle('bbsAutoCalcModal', 'none');
+            safeModalToggle('historyModal', 'none');
+            safeModalToggle('renameModal', 'none');
             safeModalToggle('mmRenameModal', 'none');
             safeModalToggle('privacyModal', 'none');
             safeModalToggle('termsModal', 'none');
@@ -798,14 +829,14 @@
             resetModeToNewCanvas();
         }
 
-        function addComponentHeading() { 
-            var comp = document.getElementById('compTitle'); 
-            var title = comp ? comp.value.trim() : ""; 
+        function addComponentHeading() {
+            var comp = document.getElementById('compTitle');
+            var title = comp ? comp.value.trim() : "";
             if(title === "") { triggerToastNotification("Please enter a Section Name."); return; }
-            bbsData.push({ type: 'HEADING', text: title.toUpperCase(), dateAdded: new Date().toISOString() }); 
+            bbsData.push({ type: 'HEADING', text: title.toUpperCase(), dateAdded: new Date().toISOString() });
             comp.value = ""; executeSilentAutoSave(); renderTable(); setTimeout(function() { switchTab('tab2'); }, 50);
         }
-        
+
         function triggerColumnFootingMath() {
             var mainLenMM = parseFloat(document.getElementById('colMainLength').value) || 0;
             var leftHookMM = parseFloat(document.getElementById('colLeftHook').value) || 0;
@@ -813,8 +844,8 @@
             var netCutLenMM = mainLenMM + leftHookMM + rightHookMM;
             document.getElementById('cutLength').value = netCutLenMM > 0 ? netCutLenMM.toFixed(0) : '';
         }
-        
-        function addBarEntry() { 
+
+        function addBarEntry() {
             var desc = document.getElementById('desc').value.trim() || "Main Bar";
             var dia = parseInt(document.getElementById('dia').value) || 16;
             var noMembers = parseFloat(document.getElementById('noMembers').value) || 0;
@@ -822,19 +853,19 @@
             var cutLen = parseFloat(document.getElementById('cutLength').value) || 0;
             var clearSpan = document.getElementById('clearSpanInput').value || "";
             var spacing = document.getElementById('spacingInput').value || "";
-            
+
             noBars = Math.ceil(noBars);
             var totalLengthM = (noMembers * noBars * cutLen) / 1000;
 
-            bbsData.push({ type: 'DATA', desc: desc, dia: dia, noMembers: noMembers, noBars: noBars, cutLength: cutLen, clearSpan: clearSpan, spacing: spacing, totalLength: Math.round(totalLengthM * 1000) / 1000, lengthUnitVersion: 'metric_v2', dateAdded: new Date().toISOString() }); 
-            executeSilentAutoSave(); renderTable(); switchTab('tab3'); 
+            bbsData.push({ type: 'DATA', desc: desc, dia: dia, noMembers: noMembers, noBars: noBars, cutLength: cutLen, clearSpan: clearSpan, spacing: spacing, totalLength: Math.round(totalLengthM * 1000) / 1000, lengthUnitVersion: 'metric_v2', dateAdded: new Date().toISOString() });
+            executeSilentAutoSave(); renderTable(); switchTab('tab3');
         }
 
         function deleteEntry(index) { bbsData.splice(index, 1); executeSilentAutoSave(); renderTable(); }
-        
-        function deleteWholeSectionBlock(index) { 
+
+        function deleteWholeSectionBlock(index) {
             showCustomConfirm("Are you sure you want to delete this heading block?", function(){
-                var targetIndex = index; bbsData.splice(targetIndex, 1); while(targetIndex < bbsData.length && bbsData[targetIndex].type !== 'HEADING') { bbsData.splice(targetIndex, 1); } executeSilentAutoSave(); renderTable(); 
+                var targetIndex = index; bbsData.splice(targetIndex, 1); while(targetIndex < bbsData.length && bbsData[targetIndex].type !== 'HEADING') { bbsData.splice(targetIndex, 1); } executeSilentAutoSave(); renderTable();
             });
         }
 
@@ -938,11 +969,11 @@
             if(!bbsData[index]) return; var text = valueText.trim();
             if(field === 'dia' || field === 'noMembers' || field === 'noBars' || field === 'cutLength' || field === 'clearSpan' || field === 'spacing' || field === 'text') {
                 if (field === 'clearSpan' || field === 'spacing' || field === 'noBars' || field === 'text') bbsData[index][field] = text; else { var numericVal = parseFloat(text.replace(/[^\d.]/g, '')) || 0; bbsData[index][field] = field === 'dia' ? parseInt(numericVal) : numericVal; }
-                if(bbsData[index].type !== 'HEADING') { 
+                if(bbsData[index].type !== 'HEADING') {
                     bbsData[index].noBars = Math.ceil(parseFloat(bbsData[index].noBars) || 0);
-                    var finalBars = parseFloat(bbsData[index].noBars) || 0, finalMembers = parseFloat(bbsData[index].noMembers) || 0, finalCutLen = parseFloat(bbsData[index].cutLength) || 0; 
+                    var finalBars = parseFloat(bbsData[index].noBars) || 0, finalMembers = parseFloat(bbsData[index].noMembers) || 0, finalCutLen = parseFloat(bbsData[index].cutLength) || 0;
                     bbsData[index].totalLength = Math.round(((finalMembers * finalBars * finalCutLen) / 1000) * 1000) / 1000;
-                    bbsData[index].lengthUnitVersion = 'metric_v2'; 
+                    bbsData[index].lengthUnitVersion = 'metric_v2';
                 }
             } else bbsData[index][field] = text;
             executeSilentAutoSave(); renderTable();
@@ -955,19 +986,19 @@
 
             for (var index = 0; index < bbsData.length; index++) {
                 var item = bbsData[index];
-                if(item.type === 'HEADING') { 
-                    finalHTML += '<tr class="heading-row"><td colspan="18"><div class="heading-flex-layout"><div class="section-editable-text" contenteditable="true" oninput="updateInlineValue(' + index + ', \'text\', this.innerText)">' + item.text + '</div><button class="section-exit-btn" onclick="deleteWholeSectionBlock(' + index + ')">Delete Block</button></div></td></tr>'; 
-                } else { 
-                    containsData = true; dataCount++; 
-                    var diaCols = ""; 
-                    for (var dIdx = 0; dIdx < activeDias.length; dIdx++) { 
-                        var d = activeDias[dIdx]; 
-                        if(item.dia === d) { 
-                            diaCols += '<td>' + item.totalLength + '</td>'; 
-                            diaTotals[d] += item.totalLength; 
-                        } else { 
-                            diaCols += '<td style="color:var(--text-muted);">0</td>'; 
-                        } 
+                if(item.type === 'HEADING') {
+                    finalHTML += '<tr class="heading-row"><td colspan="18"><div class="heading-flex-layout"><div class="section-editable-text" contenteditable="true" oninput="updateInlineValue(' + index + ', \'text\', this.innerText)">' + item.text + '</div><button class="section-exit-btn" onclick="deleteWholeSectionBlock(' + index + ')">Delete Block</button></div></td></tr>';
+                } else {
+                    containsData = true; dataCount++;
+                    var diaCols = "";
+                    for (var dIdx = 0; dIdx < activeDias.length; dIdx++) {
+                        var d = activeDias[dIdx];
+                        if(item.dia === d) {
+                            diaCols += '<td>' + item.totalLength + '</td>';
+                            diaTotals[d] += item.totalLength;
+                        } else {
+                            diaCols += '<td style="color:var(--text-muted);">0</td>';
+                        }
                     }
                     var roundedBars = Math.ceil(item.noBars);
                     var clearSpanVal = (item.clearSpan !== undefined && item.clearSpan !== "") ? item.clearSpan : "-";
@@ -985,7 +1016,7 @@
                         '<td style="font-weight:600;">' + item.totalLength + '</td>' +
                         diaCols +
                         '<td><button class="del-btn" onclick="deleteEntry(' + index + ')">'+trDel+'</button></td>' +
-                        '</tr>'; 
+                        '</tr>';
                 }
             }
             var dashCountNode = document.getElementById('dashTotalEntries'); if(dashCountNode) dashCountNode.innerText = dataCount + " Items";
@@ -993,7 +1024,7 @@
                 var weights = {8:0.395, 10:0.617, 12:0.890, 16:1.580, 20:2.470, 25:3.850, 32:6.310, 40:9.860}, grandTotalKg = 0;
                 var r1 = '<tr><td colspan="8" style="text-align:right; font-weight:bold; background:var(--bg-body);">Total Length (m)</td><td>-</td>'; for (var i = 0; i < activeDias.length; i++) r1 += '<td>' + diaTotals[activeDias[i]].toFixed(2) + '</td>'; r1 += '<td></td></tr>';
                 var r3 = '<tr><td colspan="8" style="text-align:right; font-weight:bold; background:var(--bg-body);">Weight (In Kg)</td><td>-</td>'; for (var i = 0; i < activeDias.length; i++) { var d = activeDias[i], kg = diaTotals[d] * weights[d]; grandTotalKg += kg; r3 += '<td style="font-weight:bold; color:var(--primary-color);">' + kg.toFixed(2) + '</td>'; } r3 += '<td></td></tr>';
-                var grandTotalMT = grandTotalKg / 1000; 
+                var grandTotalMT = grandTotalKg / 1000;
                 var r4 = '<tr style="background:rgba(0,168,132,0.15); font-weight:bold; color:var(--primary-color);"><td colspan="8" style="text-align:right;">Net Project Summary:</td><td colspan="3">' + grandTotalKg.toFixed(2) + ' Kg</td><td colspan="7">' + grandTotalMT.toFixed(4) + ' M.T.</td></tr>';
                 var steelRateNode = document.getElementById('steelRatePerKg'); var steelRate = steelRateNode ? (parseFloat(steelRateNode.value) || 0) : 0, costRow = "";
                 if(steelRate > 0) { var totalCost = grandTotalKg * steelRate; costRow = '<tr style="background:rgba(239,68,68,0.15); font-weight:bold; color:#ef4444;"><td colspan="8" style="text-align:right;">Estimated Steel Cost:</td><td colspan="10" style="text-align:left; padding-left:15px; font-size:14px;">₹ ' + totalCost.toLocaleString('en-IN', {maximumFractionDigits: 2}) + '</td></tr>'; }
@@ -1012,12 +1043,12 @@
         function bbsAddNewFromLiveSheet(){switchTab('tab2');document.getElementById('btn-tab2')?.scrollIntoView({behavior:'smooth',block:'center'});}
         function measurementAddNewFromLiveSheet(){switchMasterMeasTab('mmTab2');document.getElementById('btn-mmTab2')?.scrollIntoView({behavior:'smooth',block:'center'});}
 
-        /* PRINT-READY & BORDER-OPTIMIZED EXCEL EXPORT FOR BBS */
+        /* EXCEL EXPORT FOR BBS SCHEDULER - WEBVIEW FILENAME & AD FIX */
         function exportToCleanFormatedExcel() {
             var projName = document.getElementById('projectName') ? document.getElementById('projectName').value.toUpperCase() : "NEW_PROJECT";
             var dVal = document.getElementById('reportDate').value;
-            
-            var htmlData = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">' +
+
+var htmlData = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">' +
                 '<head><meta charset="UTF-8">' +
                 '<!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>BBS Schedule</x:Name><x:WorksheetOptions>' +
                 '<x:Print><x:ValidPrinterInfo/><x:Orientation>Landscape</x:Orientation><x:PaperSizeIndex>9</x:PaperSizeIndex><x:FitToPage/>' +
@@ -1028,16 +1059,7 @@
                 '@page { size: A4 landscape; margin: 0.4in; mso-page-orientation: landscape; }' +
                 'body { font-family: Calibri, Arial, sans-serif; color: #0f172a; margin: 0; padding: 0; }' +
                 'table { border-collapse: collapse; background: #ffffff; width: 100%; table-layout: fixed; }' +
-                'td, th { ' +
-                '  border: 0.75pt solid #000000 !important; ' +
-                '  padding: 6px 8px; ' +
-                '  text-align: center; ' +
-                '  vertical-align: middle; ' +
-                '  font-size: 10pt; ' +
-                '  overflow: hidden; ' +
-                '  word-wrap: break-word; ' +
-                '  mso-number-format:"\\@"; ' +
-                '}' +
+                'td, th { border: 0.75pt solid #000000 !important; padding: 6px 8px; text-align: center; vertical-align: middle; font-size: 10pt; mso-number-format:"\\@"; }' +
                 '.brand-header { font-size: 11pt; font-weight: bold; background-color: #00a884 !important; color: #ffffff !important; height: 28px; text-align: center; }' +
                 '.brand-link { color: #ffffff; text-decoration: underline; font-size: 9pt; }' +
                 '.main-title { font-size: 12pt; font-weight: bold; background-color: #1e293b !important; color: #ffffff !important; height: 30px; }' +
@@ -1055,7 +1077,7 @@
                 '<col width="65"><col width="65"><col width="65"><col width="65"><col width="65"><col width="65"><col width="65"><col width="65">' +
                 '<thead>' +
                 '<tr><th colspan="17" class="brand-header">Civil Engine BBS Calc | <a href="https://www.bttotek.in/" target="_blank" class="brand-link">www.bttotek.in</a></th></tr>' +
-                '<tr><th colspan="17" class="main-title">BAR BENDING SCHEDULE</th></tr>' + 
+                '<tr><th colspan="17" class="main-title">BAR BENDING SCHEDULE</th></tr>' +
                 '<tr><th colspan="17" style="font-size:10pt; font-weight:bold; background:#ffffff; color:#0f172a;">Project: ' + projName + (dVal ? ' | Date: ' + formatReportDate(dVal) : '') + '</th></tr>' +
                 '<tr class="header-row"><th>Sl No</th><th>Description</th><th>Dia</th><th>Clear Span (mm)</th><th>Spacing (mm)</th><th>Members</th><th>Bars</th><th>Cut Length (mm)</th><th>Total Length (m)</th><th>8mm</th><th>10mm</th><th>12mm</th><th>16mm</th><th>20mm</th><th>25mm</th><th>32mm</th><th>40mm</th></tr></thead><tbody>';
 
@@ -1071,7 +1093,7 @@
                     var diaCols = "";
                     for (var d = 0; d < activeDias.length; d++) {
                         var cd = activeDias[d];
-                        if (item.dia === cd) { diaCols += '<td class="dia-active">' + item.totalLength + '</td>'; diaTotals[cd] += item.totalLength; } 
+                        if (item.dia === cd) { diaCols += '<td class="dia-active">' + item.totalLength + '</td>'; diaTotals[cd] += item.totalLength; }
                         else { diaCols += '<td class="dia-zero">0</td>'; }
                     }
                     var clearSpanVal = (item.clearSpan !== undefined && item.clearSpan !== "") ? item.clearSpan : "-";
@@ -1092,35 +1114,43 @@
             var grandTotalMT = grandTotalKg / 1000;
             htmlData += '<tr class="grand-total"><td colspan="5" style="text-align:left;">Net Summary:</td><td colspan="4">' + grandTotalKg.toFixed(2) + ' Kg</td><td colspan="8">' + grandTotalMT.toFixed(4) + ' M.T.</td></tr></tbody></table></body></html>';
 
+            var cleanProj = (projName ? projName.replace(/[^a-zA-Z0-9_-]/g, '_') : 'PROJECT');
+            var fileName = "BBS_" + cleanProj + ".xls";
+
+            // Android Studio WebView: use native Android bridge.
+            // This prevents WebView from saving the Excel payload as .bin.
+            if (window.AndroidShare && typeof window.AndroidShare.downloadBase64File === 'function') {
+                var base64Data = btoa(unescape(encodeURIComponent(htmlData)));
+                window.AndroidShare.downloadBase64File(base64Data, 'bbs', projName);
+                return;
+            }
+
+            // Browser fallback.
             try {
-                // FIXED MIME TYPE TO PREVENT .BIN FILE DOWNLOAD ISSUE
-                var blob = new Blob(['\ufeff' + htmlData], { type: 'application/vnd.ms-excel' });
-                var fileName = (projName ? projName.replace(/\s+/g, '_') : 'BBS') + "_Report.xls";
-                
-                if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-                    window.navigator.msSaveOrOpenBlob(blob, fileName);
-                } else {
-                    var url = URL.createObjectURL(blob);
-                    var link = document.createElement("a");
-                    link.href = url;
-                    link.download = fileName;
-                    document.body.appendChild(link);
-                    link.click();
-                    setTimeout(function(){
-                        document.body.removeChild(link);
-                        URL.revokeObjectURL(url);
-                    }, 500);
-                }
-                triggerToastNotification("Excel Printable Sheet Downloaded!");
+                var excelBlob = new Blob(['\ufeff' + htmlData], { type: 'application/vnd.ms-excel' });
+                var blobUrl = URL.createObjectURL(excelBlob);
+                var nativeLink = document.createElement('a');
+                nativeLink.href = blobUrl;
+                nativeLink.download = fileName;
+                nativeLink.rel = 'noopener';
+                nativeLink.style.display = 'none';
+                document.body.appendChild(nativeLink);
+                nativeLink.click();
+                setTimeout(function(){
+                    if(nativeLink.parentNode) nativeLink.parentNode.removeChild(nativeLink);
+                    try { URL.revokeObjectURL(blobUrl); } catch(e) {}
+                }, 2000);
+                triggerToastNotification('Excel download started: ' + fileName);
             } catch(e) {
-                triggerToastNotification("Unable to save excel file on this storage.");
+                triggerToastNotification('Excel download failed. Please try again.');
+                console.error('Excel export error:', e);
             }
         }
 
         function scrollToPosition(dir) {
             var container = document.querySelector('.app-content-area');
             if(!container) return;
-            if(dir === 'top') { container.scrollTo({ top: 0, behavior: 'smooth' }); } 
+            if(dir === 'top') { container.scrollTo({ top: 0, behavior: 'smooth' }); }
             else { container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' }); }
         }
 
@@ -1140,7 +1170,7 @@
         function switchMainShellTab(tabId, btnElement) {
             document.querySelectorAll('.main-tab-panel').forEach(panel => panel.classList.remove('active'));
             document.querySelectorAll('.bottom-nav-item').forEach(btn => btn.classList.remove('active'));
-            
+
             document.getElementById(tabId).classList.add('active');
             if(btnElement) btnElement.classList.add('active');
             updateCurrentToolHeader(tabId);
@@ -1192,7 +1222,7 @@
 
         function addMasterMeasEntry() {
             var desc = document.getElementById('mmDesc').value.trim() || "Description"; var unit = document.getElementById('mmUnit').value || "CUM";
-            var nos1 = parseFloat(document.getElementById('mmNos1').value) || 1; var nos2 = parseFloat(document.getElementById('mmNos2').value) || 1; var entryType = document.getElementById('mmEntryType').value; 
+            var nos1 = parseFloat(document.getElementById('mmNos1').value) || 1; var nos2 = parseFloat(document.getElementById('mmNos2').value) || 1; var entryType = document.getElementById('mmEntryType').value;
             var lRaw = document.getElementById('mmL').value; var bRaw = document.getElementById('mmB').value; var dRaw = document.getElementById('mmD').value;
             var qty = nos1 * nos2;
             if (lRaw !== "" && !isNaN(parseFloat(lRaw))) qty *= parseFloat(lRaw);
@@ -1202,7 +1232,7 @@
 
             masterMeasData.push({ desc: desc, unit: unit, nos1: nos1, nos2: nos2, l: lRaw !== "" ? parseFloat(lRaw).toFixed(3) : "", b: bRaw !== "" ? parseFloat(bRaw).toFixed(3) : "", d: dRaw !== "" ? parseFloat(dRaw).toFixed(3) : "", qty: qty.toFixed(3), type: entryType });
             document.getElementById('mmL').value = ""; document.getElementById('mmB').value = ""; document.getElementById('mmD').value = "";
-            executeMasterMeasAutoSave(); renderMasterMeasTable(); switchMasterMeasTab('mmTab3'); 
+            executeMasterMeasAutoSave(); renderMasterMeasTable(); switchMasterMeasTab('mmTab3');
         }
 
         function updateMasterMeasInlineCell(index, field, valueText) {
@@ -1214,7 +1244,7 @@
             if (item.d !== "" && !isNaN(parseFloat(item.d))) calcQty *= parseFloat(item.d);
             if(item.type === 'DEDUCTION') calcQty = -Math.abs(calcQty);
             masterMeasData[index].qty = calcQty.toFixed(3);
-            
+
             var totalQty = 0; for (var i = 0; i < masterMeasData.length; i++) totalQty += parseFloat(masterMeasData[i].qty);
             document.getElementById('mmTotalQty').innerText = totalQty.toFixed(3);
             var qtyCell = document.getElementById('mmQtyCell_' + index); if(qtyCell) { qtyCell.innerText = masterMeasData[index].qty; qtyCell.style.color = item.type === 'DEDUCTION' ? '#ef4444' : 'var(--primary-color)'; }
@@ -1226,9 +1256,9 @@
             var sheetTitle = document.getElementById('mmSheetTitle').value || "MEASUREMENT SHEET";
             var dateRange = document.getElementById('mmPeriodDate').value;
             var finalTitleDisplay = sheetTitle + (dateRange ? " (" + dateRange + ")" : "");
-            
+
             tbody.innerHTML += '<tr><td colspan="10" style="background:var(--bg-body); font-weight:bold; text-align:center; text-transform:uppercase; color:var(--text-main); border: 1px solid var(--border-color); font-size: 11px; padding: 10px 4px;">' + finalTitleDisplay + '</td></tr>';
-            
+
             for (var i = 0; i < masterMeasData.length; i++) {
                 var item = masterMeasData[i]; var currentQty = parseFloat(item.qty); totalQty += currentQty;
                 var colorStyle = item.type === 'DEDUCTION' ? 'style="color:#ef4444; font-weight:bold;"' : 'style="color:var(--text-main);"';
@@ -1239,10 +1269,10 @@
         }
 
         function deleteMasterMeasEntry(index) { masterMeasData.splice(index, 1); executeMasterMeasAutoSave(); renderMasterMeasTable(); }
-        
-        function clearMasterMeasAll() { 
+
+        function clearMasterMeasAll() {
             showCustomConfirm("Clear measurement table?", function(){
-                masterMeasData = []; executeMasterMeasAutoSave(); renderMasterMeasTable(); switchMasterMeasTab('mmTab1'); 
+                masterMeasData = []; executeMasterMeasAutoSave(); renderMasterMeasTable(); switchMasterMeasTab('mmTab1');
             });
         }
 
@@ -1289,13 +1319,13 @@
             var selectedSheet = historyLog.find(function(x) { return x.id === recordId; });
             if(selectedSheet) {
                 document.getElementById('mmProjectName').value = selectedSheet.projectName; document.getElementById('mmSheetTitle').value = selectedSheet.title; document.getElementById('mmPeriodDate').value = selectedSheet.periodDate || "";
-                masterMeasData = JSON.parse(JSON.stringify(selectedSheet.data)); renderMasterMeasTable(); triggerToastNotification("Record loaded successfully!"); switchMasterMeasTab('mmTab3'); 
+                masterMeasData = JSON.parse(JSON.stringify(selectedSheet.data)); renderMasterMeasTable(); triggerToastNotification("Record loaded successfully!"); switchMasterMeasTab('mmTab3');
             }
         }
 
         function toggleMmHistoryPanel(mode) {
             var panel = document.getElementById('mmConditionalHistoryPanel');
-            if (mode === "OLD") { panel.style.display = "block"; } 
+            if (mode === "OLD") { panel.style.display = "block"; }
             else { panel.style.display = "none"; masterMeasData = []; renderMasterMeasTable(); document.getElementById('mmProjectName').value = "NEW SITE"; document.getElementById('mmSheetTitle').value = "MEASUREMENT SHEET"; document.getElementById('mmPeriodDate').value = ""; }
         }
 
@@ -1342,13 +1372,13 @@
             if(matchCount === 0) container.innerHTML = "<div style='font-size:12px; color:var(--text-muted); text-align:center; padding:15px;'>No matching records found.</div>";
         }
 
-        /* PRINT-READY & BORDER-OPTIMIZED EXCEL EXPORT FOR MEASUREMENT SHEET */
+        /* EXCEL EXPORT FOR MEASUREMENT SHEET - WEBVIEW FILENAME & AD FIX */
         function exportMasterMeasExcel() {
             var title = document.getElementById('mmSheetTitle').value || "MEASUREMENT SHEET";
             var pName = document.getElementById('mmProjectName').value || "NEW SITE";
             var date = document.getElementById('mmPeriodDate').value || "";
 
-            var htmlData = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">' +
+var htmlData = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">' +
                 '<head><meta charset="UTF-8">' +
                 '<!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>Measurement Sheet</x:Name><x:WorksheetOptions>' +
                 '<x:Print><x:ValidPrinterInfo/><x:Orientation>Portrait</x:Orientation><x:PaperSizeIndex>9</x:PaperSizeIndex><x:FitToPage/>' +
@@ -1359,16 +1389,7 @@
                 '@page { size: A4 portrait; margin: 0.4in; mso-page-orientation: portrait; }' +
                 'body { font-family: Calibri, Arial, sans-serif; color: #0f172a; margin: 0; padding: 0; }' +
                 'table { border-collapse: collapse; background: #ffffff; width: 100%; table-layout: fixed; }' +
-                'td, th { ' +
-                '  border: 0.75pt solid #000000 !important; ' +
-                '  padding: 6px 8px; ' +
-                '  text-align: center; ' +
-                '  vertical-align: middle; ' +
-                '  font-size: 10pt; ' +
-                '  overflow: hidden; ' +
-                '  word-wrap: break-word; ' +
-                '  mso-number-format:"\\@"; ' +
-                '}' +
+                'td, th { border: 0.75pt solid #000000 !important; padding: 6px 8px; text-align: center; vertical-align: middle; font-size: 10pt; mso-number-format:"\\@"; }' +
                 '.brand-header { font-size: 11pt; font-weight: bold; background-color: #00a884 !important; color: #ffffff !important; height: 28px; text-align: center; }' +
                 '.brand-link { color: #ffffff; text-decoration: underline; font-size: 9pt; }' +
                 '.header-brand { font-size: 11pt; font-weight: bold; height: 28px; text-align: center; background-color: #1e293b !important; color: #ffffff !important; }' +
@@ -1381,19 +1402,9 @@
                 '<col width="50"><col width="220"><col width="75"><col width="65"><col width="65"><col width="75"><col width="75"><col width="75"><col width="90">' +
                 '<thead>' +
                 '<tr><th colspan="9" class="brand-header">Civil Engine BBS Calc | <a href="https://www.bttotek.in/" target="_blank" class="brand-link">www.bttotek.in</a></th></tr>' +
-                '<tr><th colspan="9" class="header-brand">MASTER MEASUREMENT SHEET</th></tr>' + 
+                '<tr><th colspan="9" class="header-brand">MASTER MEASUREMENT SHEET</th></tr>' +
                 '<tr><th colspan="9" class="header-brand">Project: ' + pName.toUpperCase() + (date ? ' | Date: ' + formatReportDate(date) : '') + '</th></tr>' +
-                '<tr class="th-main">' +
-                '  <th>Sr.No.</th>' +
-                '  <th>Description</th>' +
-                '  <th>Unit</th>' +
-                '  <th>NOS 1</th>' +
-                '  <th>NOS 2</th>' +
-                '  <th>L</th>' +
-                '  <th>B</th>' +
-                '  <th>D</th>' +
-                '  <th>QTY</th>' +
-                '</tr>' +
+                '<tr class="th-main"><th>Sr.No.</th><th>Description</th><th>Unit</th><th>NOS 1</th><th>NOS 2</th><th>L</th><th>B</th><th>D</th><th>QTY</th></tr>' +
                 '<tr><td colspan="9" class="heading-row-item"><b>' + title.toUpperCase() + '</b></td></tr>' +
                 '</thead><tbody>';
 
@@ -1402,7 +1413,7 @@
                 var m = masterMeasData[i];
                 var currentQty = parseFloat(m.qty);
                 totalQty += currentQty;
-                
+
                 htmlData += '<tr>' +
                     '<td>' + (i + 1) + '</td>' +
                     '<td style="text-align:left;">' + m.desc + '</td>' +
@@ -1416,34 +1427,38 @@
                     '</tr>';
             }
 
-            htmlData += '<tr>' +
-                '<td colspan="8" class="total-label">Total =</td>' +
-                '<td class="total-val">' + totalQty.toFixed(3) + '</td>' +
-                '</tr>' +
-                '</tbody></table></body></html>';
+            htmlData += '<tr><td colspan="8" class="total-label">Total =</td><td class="total-val">' + totalQty.toFixed(3) + '</td></tr></tbody></table></body></html>';
 
+            var cleanProj = (pName ? pName.replace(/[^a-zA-Z0-9_-]/g, '_') : 'MEASUREMENT');
+            var fileName = "MEASUREMENT_" + cleanProj + ".xls";
+
+            // Android Studio WebView: use native Android bridge.
+            // This prevents WebView from saving the Excel payload as .bin.
+            if (window.AndroidShare && typeof window.AndroidShare.downloadBase64File === 'function') {
+                var base64Data = btoa(unescape(encodeURIComponent(htmlData)));
+                window.AndroidShare.downloadBase64File(base64Data, 'measurement', pName);
+                return;
+            }
+
+            // Browser fallback.
             try {
-                // FIXED MIME TYPE TO PREVENT .BIN FILE DOWNLOAD ISSUE
-                var blob = new Blob(['\ufeff' + htmlData], { type: 'application/vnd.ms-excel' });
-                var fileName = pName.replace(/\s+/g, '_') + "_Measurement_Sheet.xls";
-
-                if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-                    window.navigator.msSaveOrOpenBlob(blob, fileName);
-                } else {
-                    var url = URL.createObjectURL(blob);
-                    var link = document.createElement("a");
-                    link.href = url;
-                    link.download = fileName;
-                    document.body.appendChild(link);
-                    link.click();
-                    setTimeout(function(){
-                        document.body.removeChild(link);
-                        URL.revokeObjectURL(url);
-                    }, 500);
-                }
-                triggerToastNotification("Excel Measurement File Downloaded!");
+                var excelBlob = new Blob(['\ufeff' + htmlData], { type: 'application/vnd.ms-excel' });
+                var blobUrl = URL.createObjectURL(excelBlob);
+                var nativeLink = document.createElement('a');
+                nativeLink.href = blobUrl;
+                nativeLink.download = fileName;
+                nativeLink.rel = 'noopener';
+                nativeLink.style.display = 'none';
+                document.body.appendChild(nativeLink);
+                nativeLink.click();
+                setTimeout(function(){
+                    if(nativeLink.parentNode) nativeLink.parentNode.removeChild(nativeLink);
+                    try { URL.revokeObjectURL(blobUrl); } catch(e) {}
+                }, 2000);
+                triggerToastNotification('Excel download started: ' + fileName);
             } catch(e) {
-                triggerToastNotification("Unable to save file.");
+                triggerToastNotification('Excel download failed. Please try again.');
+                console.error('Excel export error:', e);
             }
         }
 
@@ -1469,30 +1484,30 @@
             document.getElementById('steelResultBox').style.display = "block";
         }
 
-        function toggleConcreteInputMode() { 
-            var mode = document.getElementById('concInputMode').value; 
-            document.getElementById('concDirectWrapper').style.display = (mode === 'DIRECT' ? 'block' : 'none'); 
-            document.getElementById('concDimWrapper').style.display = (mode === 'DIMENSION' ? 'block' : 'none'); 
+        function toggleConcreteInputMode() {
+            var mode = document.getElementById('concInputMode').value;
+            document.getElementById('concDirectWrapper').style.display = (mode === 'DIRECT' ? 'block' : 'none');
+            document.getElementById('concDimWrapper').style.display = (mode === 'DIMENSION' ? 'block' : 'none');
         }
         function toggleConcreteMixMode() { var grade = document.getElementById('concMixGrade').value; document.getElementById('concCustomRatioWrapper').style.display = (grade === 'CUSTOM' ? 'block' : 'none'); }
 
-        function calculateConcrete() { 
+        function calculateConcrete() {
             var mode = document.getElementById('concInputMode').value; var vol = 0;
             if (mode === 'DIRECT') {
                 vol = parseFloat(document.getElementById('calcVol').value) || 0;
-            } else { 
+            } else {
                 var l = parseFloat(document.getElementById('concLen').value) || 0;
                 var w = parseFloat(document.getElementById('concWidth').value) || 0;
                 var t = parseFloat(document.getElementById('concThick').value) || 0;
-                var unit = document.getElementById('concDimUnit').value; 
-                vol = l * w * t; 
-                if (unit === 'FEET') vol = vol / 35.3147; 
+                var unit = document.getElementById('concDimUnit').value;
+                vol = l * w * t;
+                if (unit === 'FEET') vol = vol / 35.3147;
             }
             if(vol <= 0) return alert("Please enter valid volume/dimensions.");
             var grade = document.getElementById('concMixGrade').value; var cR = 1, sR = 1.5, aR = 3;
             if (grade === 'M15') { cR = 1; sR = 2; aR = 4; } else if (grade === 'M20') { cR = 1; sR = 1.5; aR = 3; } else if (grade === 'M25') { cR = 1; sR = 1; aR = 2; } else { cR = parseFloat(document.getElementById('concCustC').value) || 1; sR = parseFloat(document.getElementById('concCustS').value) || 1.5; aR = parseFloat(document.getElementById('concCustA').value) || 3; }
             var dryVol = vol * 1.54, totalParts = cR + sR + aR, cementVol = (cR / totalParts) * dryVol, cementBags = cementVol / 0.0347, sandCft = ((sR / totalParts) * dryVol) * 35.3147, aggCft = ((aR / totalParts) * dryVol) * 35.3147;
-            document.getElementById('concreteResultBox').innerHTML = "Total Volume: <b>" + vol.toFixed(4) + " m³</b><br>Cement: <b>" + cementBags.toFixed(2) + " Bags</b><br>Sand: <b>" + sandCft.toFixed(2) + " cft</b><br>Aggregate: <b>" + aggCft.toFixed(2) + " cft</b>"; document.getElementById('concreteResultBox').style.display = "block"; 
+            document.getElementById('concreteResultBox').innerHTML = "Total Volume: <b>" + vol.toFixed(4) + " m³</b><br>Cement: <b>" + cementBags.toFixed(2) + " Bags</b><br>Sand: <b>" + sandCft.toFixed(2) + " cft</b><br>Aggregate: <b>" + aggCft.toFixed(2) + " cft</b>"; document.getElementById('concreteResultBox').style.display = "block";
         }
 
         function toggleBrickInputMode() { var mode = document.getElementById('brickInputMode').value; document.getElementById('brickDirectWrapper').style.display = (mode === 'DIRECT' ? 'block' : 'none'); document.getElementById('brickDimWrapper').style.display = (mode === 'DIMENSION' ? 'block' : 'none'); }
@@ -1506,38 +1521,38 @@
             document.getElementById('brickResultBox').innerHTML = "Total Bricks: <b>" + totalBricks.toFixed(2) + " Nos</b><br>Cement: <b>" + cementBags.toFixed(2) + " Bags</b><br>Sand: <b>" + sandCft.toFixed(2) + " cft</b>"; document.getElementById('brickResultBox').style.display = "block";
         }
 
-        function toggleBlockInputMode() { 
-            var mode = document.getElementById('blockInputMode').value; 
-            document.getElementById('blockDirectWrapper').style.display = (mode === 'DIRECT' ? 'block' : 'none'); 
-            document.getElementById('blockDimWrapper').style.display = (mode === 'DIMENSION' ? 'block' : 'none'); 
+        function toggleBlockInputMode() {
+            var mode = document.getElementById('blockInputMode').value;
+            document.getElementById('blockDirectWrapper').style.display = (mode === 'DIRECT' ? 'block' : 'none');
+            document.getElementById('blockDimWrapper').style.display = (mode === 'DIMENSION' ? 'block' : 'none');
         }
         function toggleBlockSizeMode() { var size = document.getElementById('blockSizeSelect').value; document.getElementById('blockCustomSizeWrapper').style.display = (size === 'CUSTOM' ? 'block' : 'none'); }
         function toggleBlockMixMode() { var mix = document.getElementById('blockMortarRatio').value; document.getElementById('blockCustomMixWrapper').style.display = (mix === 'CUSTOM' ? 'block' : 'none'); }
 
         function calculateBlockWork() {
             var mode = document.getElementById('blockInputMode').value; var rawVol = 0;
-            if (mode === 'DIRECT') { 
-                rawVol = parseFloat(document.getElementById('blockVolVal').value) || 0; 
-            } else { 
+            if (mode === 'DIRECT') {
+                rawVol = parseFloat(document.getElementById('blockVolVal').value) || 0;
+            } else {
                 var l = parseFloat(document.getElementById('blockLen').value) || 0;
                 var w = parseFloat(document.getElementById('blockThick').value) || 0;
                 var h = parseFloat(document.getElementById('blockHeight').value) || 0;
-                var unit = document.getElementById('blockDimUnit').value; 
-                rawVol = l * w * h; 
-                if (unit === 'FEET') rawVol = rawVol / 35.3147; 
+                var unit = document.getElementById('blockDimUnit').value;
+                rawVol = l * w * h;
+                if (unit === 'FEET') rawVol = rawVol / 35.3147;
             }
             var deductionVol = parseFloat(document.getElementById('blockDeductionVol').value) || 0; var netVol = rawVol - deductionVol;
             if(netVol <= 0) return alert("Please specify valid targets.");
-            var sizeOpt = document.getElementById('blockSizeSelect').value; var bl = 600, bw = 200, bh = 200; 
-            if (sizeOpt === '400x100x200') { bl = 400; bw = 100; bh = 200; } 
+            var sizeOpt = document.getElementById('blockSizeSelect').value; var bl = 600, bw = 200, bh = 200;
+            if (sizeOpt === '400x100x200') { bl = 400; bw = 100; bh = 200; }
             else if (sizeOpt === 'CUSTOM') { bl = parseFloat(document.getElementById('blockCustL').value) || 600; bw = parseFloat(document.getElementById('blockCustW').value) || 200; bh = parseFloat(document.getElementById('blockCustH').value) || 200; }
             var blockVolWithMortar = ((bl + 10) / 1000) * ((bw + 10) / 1000) * ((bh + 10) / 1000); var totalBlocks = netVol / blockVolWithMortar;
             var singleRealBlockVol = (bl / 1000) * (bw / 1000) * (bh / 1000); var netBlocksSolidVol = totalBlocks * singleRealBlockVol;
-            var wetMortarVol = netVol - netBlocksSolidVol; var dryMortar = wetMortarVol * 1.33; 
+            var wetMortarVol = netVol - netBlocksSolidVol; var dryMortar = wetMortarVol * 1.33;
             var mix = document.getElementById('blockMortarRatio').value; var cPart = 1, sPart = 6;
             if (mix === 'CUSTOM') { cPart = parseFloat(document.getElementById('blockCustC').value) || 1; sPart = parseFloat(document.getElementById('blockCustS').value) || 6; }
             var totalParts = cPart + sPart; var cementBags = (dryMortar * (cPart / totalParts)) / 0.0347; var sandCft = (dryMortar * (sPart / totalParts)) * 35.3147;
-            document.getElementById('blockResultBox').innerHTML = "Net Volume: <b>" + netVol.toFixed(3) + " m³</b><br>Total AAC Blocks: <b>" + Math.ceil(totalBlocks) + " Nos</b><br>Cement: <b>" + cementBags.toFixed(2) + " Bags</b><br>Sand: <b>" + sandCft.toFixed(2) + " cft</b>"; 
+            document.getElementById('blockResultBox').innerHTML = "Net Volume: <b>" + netVol.toFixed(3) + " m³</b><br>Total AAC Blocks: <b>" + Math.ceil(totalBlocks) + " Nos</b><br>Cement: <b>" + cementBags.toFixed(2) + " Bags</b><br>Sand: <b>" + sandCft.toFixed(2) + " cft</b>";
             document.getElementById('blockResultBox').style.display = "block";
         }
 
@@ -1565,12 +1580,12 @@
             document.getElementById('tileResultBox').innerHTML = "Total Tiles Required: <b>" + totalTiles.toFixed(2) + " Nos</b><br>Cement Paste: <b>" + cementBags.toFixed(2) + " Bags</b>"; document.getElementById('tileResultBox').style.display = "block";
         }
 
-        function calculateShuttering() { 
-            var areaVal = parseFloat(document.getElementById('shutteringAreaVal').value) || 0; if(areaVal <= 0) return alert("Type area."); 
-            var unitElementSelect = document.getElementById('shutteringUnitSelect').value; var areaSqM = unitElementSelect === 'SQFT' ? areaVal / 10.7639 : areaVal; 
-            var plySheets = areaSqM / 2.97; var releaseOil = areaSqM * 0.2; 
-            document.getElementById('shutteringResultBox').innerHTML = "Ply Sheets (8'x4'): <b>" + plySheets.toFixed(2) + " Nos</b><br>Release Oil: <b>" + releaseOil.toFixed(2) + " Liters</b>"; 
-            document.getElementById('shutteringResultBox').style.display = "block"; 
+        function calculateShuttering() {
+            var areaVal = parseFloat(document.getElementById('shutteringAreaVal').value) || 0; if(areaVal <= 0) return alert("Type area.");
+            var unitElementSelect = document.getElementById('shutteringUnitSelect').value; var areaSqM = unitElementSelect === 'SQFT' ? areaVal / 10.7639 : areaVal;
+            var plySheets = areaSqM / 2.97; var releaseOil = areaSqM * 0.2;
+            document.getElementById('shutteringResultBox').innerHTML = "Ply Sheets (8'x4'): <b>" + plySheets.toFixed(2) + " Nos</b><br>Release Oil: <b>" + releaseOil.toFixed(2) + " Liters</b>";
+            document.getElementById('shutteringResultBox').style.display = "block";
         }
 
         function calculateExcavation() {
@@ -1595,7 +1610,7 @@
 
             var volM3 = l * b * h;
             if(unit === 'FEET') volM3 = volM3 / 35.3147;
-            
+
             var liters = volM3 * 1000;
             var gallons = liters * 0.264172;
 
@@ -1603,16 +1618,16 @@
             document.getElementById('tankResultBox').style.display = "block";
         }
 
-        function verifyQualityParameter() { 
-            var slump = parseFloat(document.getElementById('qcSlump').value) || 0; var cube = parseFloat(document.getElementById('qcCube').value) || 0; 
+        function verifyQualityParameter() {
+            var slump = parseFloat(document.getElementById('qcSlump').value) || 0; var cube = parseFloat(document.getElementById('qcCube').value) || 0;
             var age = document.getElementById('qcAgeSelect').value; var targetGrade = document.getElementById('qcConcreteGradeSelect').value;
             var targetStrength = 20; if(targetGrade === "M15") targetStrength = 15; else if(targetGrade === "M25") targetStrength = 25; else if(targetGrade === "M30") targetStrength = 30;
             var requiredRatio = 1.0; var periodText = "28 Days"; if(age === "7DAYS") { requiredRatio = 0.65; periodText = "7 Days"; } else if(age === "14DAYS") { requiredRatio = 0.90; periodText = "14 Days"; }
-            var passMinStrength = targetStrength * requiredRatio; var statusStr = ""; 
-            if (slump >= 75 && slump <= 125) statusStr += "✔️ Slump: <b>PASSED (" + slump + " mm)</b><br>"; else statusStr += "❌ Slump: <b>FAILED (Standard: 75-125 mm)</b><br>"; 
-            if (cube >= passMinStrength) statusStr += "✔️ " + periodText + " Cube Test: <b>PASSED (" + cube.toFixed(1) + " N/mm²)</b>"; 
-            else statusStr += "❌ " + periodText + " Cube Test: <b>FAILED (" + cube.toFixed(1) + " N/mm²)</b>"; 
-            document.getElementById('qualityResultBox').innerHTML = statusStr; document.getElementById('qualityResultBox').style.display = "block"; 
+            var passMinStrength = targetStrength * requiredRatio; var statusStr = "";
+            if (slump >= 75 && slump <= 125) statusStr += "✔️ Slump: <b>PASSED (" + slump + " mm)</b><br>"; else statusStr += "❌ Slump: <b>FAILED (Standard: 75-125 mm)</b><br>";
+            if (cube >= passMinStrength) statusStr += "✔️ " + periodText + " Cube Test: <b>PASSED (" + cube.toFixed(1) + " N/mm²)</b>";
+            else statusStr += "❌ " + periodText + " Cube Test: <b>FAILED (" + cube.toFixed(1) + " N/mm²)</b>";
+            document.getElementById('qualityResultBox').innerHTML = statusStr; document.getElementById('qualityResultBox').style.display = "block";
         }
 
         function filterUnitConverterTab(category, btnElement) {
@@ -1634,7 +1649,7 @@
             let val = parseFloat(document.getElementById('lenVal').value) || 0;
             let from = document.getElementById('lenFrom').value;
             let to = document.getElementById('lenTo').value;
-            
+
             let meters = val;
             if(from === 'ft') meters = val * 0.3048;
             else if(from === 'in') meters = val * 0.0254;
@@ -1764,16 +1779,16 @@
         <div class="sidebar-home-logo-icon">🏠</div>
         <div class="sidebar-app-details">
             <h3>Civil Engine</h3>
-            <p>BBS Calc v2.0 • BTTOTEK Solutions</p>
+            <p>BBS Calc v2.2 • BTTOTEK Solutions</p>
         </div>
     </div>
-    
+
     <ul class="sidebar-menu-list">
         <li><a href="#" onclick="switchMainShellTab('main-tab-bbs', document.querySelectorAll('.bottom-nav-item')[0]); toggleSidebar();">📊 BBS Calc</a></li>
         <li><a href="#" onclick="switchMainShellTab('main-tab-calculator', document.querySelectorAll('.bottom-nav-item')[1]); toggleSidebar();">🧮 Calculator</a></li>
         <li><a href="#" onclick="switchMainShellTab('main-tab-measurement', document.querySelectorAll('.bottom-nav-item')[2]); toggleSidebar();">📏 Measurement Sheet</a></li>
         <li><a href="#" onclick="switchMainShellTab('main-tab-unit', document.querySelectorAll('.bottom-nav-item')[3]); toggleSidebar();">🔄 Unit Converter</a></li>
-        
+
         <button class="sidebar-folder-btn" onclick="toggleSidebarFolder('folderSettings', event)">
             <span>⚙️ Settings</span> <span>🔽</span>
         </button>
@@ -1803,8 +1818,10 @@
         </div>
 
         <li class="sidebar-share-app">
-            <a href="#" onclick="triggerApkShare(); toggleSidebar(); return false;">📤 Share App</a>
+            <a href="#" onclick="triggerApkShare(); toggleSidebar(); return false;">📥 Share App</a>
         </li>
+        <li><a href="#" onclick="buySubscription(); toggleSidebar();">👑 Remove Ads / Subscription</a></li>
+        <li><a href="#" onclick="exitApp(); toggleSidebar();">🚪 Exit App</a></li>
     </ul>
 </div>
 
@@ -1858,7 +1875,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div id="tab2" class="tab-content">
                 <div class="custom-dim-panel modal-inner-group-box" style="border-left:4px solid var(--primary-color);">
                     <label style="color:var(--primary-color); font-weight:bold; font-size:11px;">🏢 Column / Footing Shape Generator</label>
@@ -1935,28 +1952,28 @@
                 <div class="table-responsive">
                     <table id="bbsTable">
                         <thead>
-                            <tr>
-                                <th rowspan="2">Sl No</th>
-                                <th rowspan="2">Description</th>
-                                <th rowspan="2">Dia</th>
-                                <th rowspan="2" id="thClearSpanHeader">Clear Span (mm)</th>
-                                <th rowspan="2" id="thSpacingHeader">Spacing (mm)</th>
-                                <th colspan="2">Nos</th>
-                                <th rowspan="2">Cut Length</th>
-                                <th rowspan="2">Total Length</th>
-                                <th colspan="8">Diameter Wise Breakdowns (Meters)</th>
-                                <th rowspan="2">Action</th>
-                            </tr>
-                            <tr>
-                                <th>Members</th>
-                                <th>Bars</th>
-                                <th>8mm</th><th>10mm</th><th>12mm</th><th>16mm</th><th>20mm</th><th>25mm</th><th>32mm</th><th>40mm</th>
-                            </tr>
+                        <tr>
+                            <th rowspan="2">Sl No</th>
+                            <th rowspan="2">Description</th>
+                            <th rowspan="2">Dia</th>
+                            <th rowspan="2" id="thClearSpanHeader">Clear Span (mm)</th>
+                            <th rowspan="2" id="thSpacingHeader">Spacing (mm)</th>
+                            <th colspan="2">Nos</th>
+                            <th rowspan="2">Cut Length</th>
+                            <th rowspan="2">Total Length</th>
+                            <th colspan="8">Diameter Wise Breakdowns (Meters)</th>
+                            <th rowspan="2">Action</th>
+                        </tr>
+                        <tr>
+                            <th>Members</th>
+                            <th>Bars</th>
+                            <th>8mm</th><th>10mm</th><th>12mm</th><th>16mm</th><th>20mm</th><th>25mm</th><th>32mm</th><th>40mm</th>
+                        </tr>
                         </thead>
                         <tbody id="bbsTableBody"></tbody>
                     </table>
                 </div>
-                
+
                 <div class="grid-actions-panel">
                     <button class="action-btn" style="background:var(--primary-color);" onclick="bbsAddNewFromLiveSheet()">➕ Add New</button>
                     <button class="download-btn" id="btnExportExcelNode" tabindex="36" onclick="exportToCleanFormatedExcel()">📥 Export Excel</button>
@@ -2422,26 +2439,26 @@
             <div class="table-responsive" style="max-height: 320px; margin-top: 5px;">
                 <table>
                     <thead>
-                        <tr>
-                            <th style="width: 50px;">Sr.No.</th>
-                            <th>Description</th>
-                            <th style="width: 70px;">Unit</th>
-                            <th style="width: 65px;">NOS 1</th>
-                            <th style="width: 65px;">NOS 2</th>
-                            <th style="width: 75px;">L</th>
-                            <th style="width: 75px;">B</th>
-                            <th style="width: 75px;">D</th>
-                            <th style="width: 110px;">QTY</th>
-                            <th style="width: 50px;">Act</th>
-                        </tr>
+                    <tr>
+                        <th style="width: 50px;">Sr.No.</th>
+                        <th>Description</th>
+                        <th style="width: 70px;">Unit</th>
+                        <th style="width: 65px;">NOS 1</th>
+                        <th style="width: 65px;">NOS 2</th>
+                        <th style="width: 75px;">L</th>
+                        <th style="width: 75px;">B</th>
+                        <th style="width: 75px;">D</th>
+                        <th style="width: 110px;">QTY</th>
+                        <th style="width: 50px;">Act</th>
+                    </tr>
                     </thead>
                     <tbody id="mmTableBody"></tbody>
                     <tfoot>
-                        <tr>
-                            <td colspan="8" style="text-align: right; font-weight: bold; background: var(--bg-body); font-size:13px; color:var(--text-main);">Total =</td>
-                            <td id="mmTotalQty" style="font-weight: bold; background: rgba(0,168,132,0.15); color: var(--primary-color); font-size:13px;">0.000</td>
-                            <td style="background: var(--bg-body);"></td>
-                        </tr>
+                    <tr>
+                        <td colspan="8" style="text-align: right; font-weight: bold; background: var(--bg-body); font-size:13px; color:var(--text-main);">Total =</td>
+                        <td id="mmTotalQty" style="font-weight: bold; background: rgba(0,168,132,0.15); color: var(--primary-color); font-size:13px;">0.000</td>
+                        <td style="background: var(--bg-body);"></td>
+                    </tr>
                     </tfoot>
                 </table>
             </div>
@@ -2752,7 +2769,7 @@
             <h4>Data Collection & Storage</h4>
             <p>Project names, BBS entries, measurement records, estimates and calculation history are stored locally on the device for the app's core features. The app does not require an account for these features. Users should export or back up important records before clearing app data or uninstalling the app.</p>
             <h4>Third-Party Services</h4>
-            <p>This V2 app HTML does not include website Google Analytics or Google AdSense scripts.</p>
+            <p>This V2.2 app HTML does not include website Google Analytics or Google AdSense scripts.</p>
             <h4>Support</h4>
             <p>For support or privacy questions, use the developer contact information published on the official Google Play listing.</p>
         </div>
@@ -2794,7 +2811,7 @@
         <button class="modal-close-btn" onclick="closeAllModals()">X</button>
         <h3 style="color:var(--primary-color); border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-top: 5px;">ℹ️ About BBS Engine</h3>
         <div style="font-size:13px; line-height:1.6; color:var(--text-main);">
-            <p><strong>System Version:</strong> 2.0.0 (V2)</p>
+            <p><strong>System Version:</strong> 2.2.0 (V2.2)</p>
             <p>Civil Engine BBS Calc is a local-first structural quantity and calculation utility for quantity estimators, site engineers, contractors, students and construction professionals.</p>
             <p><strong>Brand:</strong> BTTOTEK Solutions</p>
             <p>© 2026 Civil Engine BBS Calc. All rights reserved.</p>
