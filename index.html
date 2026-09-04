@@ -5,11 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <title>Civil Engine BBS Calc v2.2 - Construction & Quantity Estimator</title>
+    <title>Civil Construction Calculator v2.5 - Construction & Quantity Estimator</title>
     <meta name="description" content="All-in-one Civil Engineering & Quantity Estimator: Steel Weight Calculator, Bar Bending Schedule (BBS), Concrete Mix Ratio, Brickwork & Plaster Estimator, Shuttering, Tiles, and Quality Control Dashboard.">
     <meta name="keywords" content="Steel Weight Calculator, Bar Bending Schedule Calculator, BBS Calc, Concrete Calculator, Brickwork Calculator, Plaster Calculator, Construction Cost Estimator, Civil Engineering Calculator, Shuttering Calculator, AAC Block Estimator, Tile Calculator, Cement Sand Aggregate Quantity">
-    <meta name="author" content="Civil Engine BBS Calc">
-    <meta name="app-version" content="2.2.0">
+    <meta name="author" content="Civil Construction Calculator">
+    <meta name="app-version" content="2.5.0-admob-blankspace">
 
     <style>
         :root {
@@ -391,6 +391,36 @@
         .legal-modal-content { font-size: 13px; line-height: 1.5; color: var(--text-main); }
         .legal-modal-content h4 { color: var(--primary-color); margin: 12px 0 4px 0; font-size: 14px; }
         .legal-modal-content p { margin: 0 0 8px 0; }
+    
+/* ===== BTTOTEK ADMOB: BLANK-SPACE ONLY ===== */
+/* Normal document-flow slot: never fixed, sticky, or attached to bottom navigation. */
+.admob-banner-slot {
+    width: 100%;
+    height: 70px;
+    box-sizing: border-box;
+    margin: clamp(70px, 10vh, 120px) auto 95px;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+    pointer-events: none;
+}
+.admob-banner-slot .admob-banner-placeholder {
+    width: 100%;
+    height: 50px;
+    max-width: 728px;
+    box-sizing: border-box;
+    background: transparent;
+}
+@media (min-width: 600px) {
+    .admob-banner-slot {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+}
+
     </style>
 
     <script>
@@ -506,6 +536,7 @@
                 calcSteelUnitWeight();
             }
             updateCurrentToolHeader('main-tab-bbs');
+            requestNativeBannerAd('adSlotBbs');
         };
 
         function openTopSearchBar() {
@@ -758,10 +789,10 @@
 
         function triggerApkShare() {
             var playStoreUrl = 'https://play.google.com/store/apps/details?id=com.shiv.bbscalc';
-            var shareText = 'Civil Engine BBS Calc - BBS, measurement and civil engineering calculator tools.\n' + playStoreUrl;
+            var shareText = 'Civil Construction Calculator - BBS, measurement and civil engineering calculator tools.\n' + playStoreUrl;
 
             if (navigator.share) {
-                navigator.share({ title: 'Civil Engine BBS Calc', text: shareText }).then(function(){
+                navigator.share({ title: 'Civil Construction Calculator', text: shareText }).then(function(){
                     triggerToastNotification('App shared successfully!');
                 }).catch(function(err){
                     fallbackCopyShareLink(playStoreUrl);
@@ -1076,7 +1107,7 @@ var htmlData = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x=
                 '<col width="50"><col width="180"><col width="60"><col width="100"><col width="100"><col width="75"><col width="65"><col width="100"><col width="100">' +
                 '<col width="65"><col width="65"><col width="65"><col width="65"><col width="65"><col width="65"><col width="65"><col width="65">' +
                 '<thead>' +
-                '<tr><th colspan="17" class="brand-header">Civil Engine BBS Calc | <a href="https://www.bttotek.in/" target="_blank" class="brand-link">www.bttotek.in</a></th></tr>' +
+                '<tr><th colspan="17" class="brand-header">Civil Construction Calculator | <a href="https://www.bttotek.in/" target="_blank" class="brand-link">www.bttotek.in</a></th></tr>' +
                 '<tr><th colspan="17" class="main-title">BAR BENDING SCHEDULE</th></tr>' +
                 '<tr><th colspan="17" style="font-size:10pt; font-weight:bold; background:#ffffff; color:#0f172a;">Project: ' + projName + (dVal ? ' | Date: ' + formatReportDate(dVal) : '') + '</th></tr>' +
                 '<tr class="header-row"><th>Sl No</th><th>Description</th><th>Dia</th><th>Clear Span (mm)</th><th>Spacing (mm)</th><th>Members</th><th>Bars</th><th>Cut Length (mm)</th><th>Total Length (m)</th><th>8mm</th><th>10mm</th><th>12mm</th><th>16mm</th><th>20mm</th><th>25mm</th><th>32mm</th><th>40mm</th></tr></thead><tbody>';
@@ -1119,6 +1150,7 @@ var htmlData = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x=
 
             // Android Studio WebView: use native Android bridge.
             // This prevents WebView from saving the Excel payload as .bin.
+            // EXISTING EXCEL DOWNLOAD BRIDGE — DO NOT CHANGE.
             if (window.AndroidShare && typeof window.AndroidShare.downloadBase64File === 'function') {
                 var base64Data = btoa(unescape(encodeURIComponent(htmlData)));
                 window.AndroidShare.downloadBase64File(base64Data, 'bbs', projName);
@@ -1174,6 +1206,17 @@ var htmlData = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x=
             document.getElementById(tabId).classList.add('active');
             if(btnElement) btnElement.classList.add('active');
             updateCurrentToolHeader(tabId);
+
+            var adSlotMap = {
+                'main-tab-bbs': 'adSlotBbs',
+                'main-tab-calculator': 'adSlotCalculator',
+                'main-tab-measurement': 'adSlotMeasurement',
+                'main-tab-unit': 'adSlotUnit'
+            };
+            hideNativeBannerAd();
+            if (adSlotMap[tabId]) {
+                requestNativeBannerAd(adSlotMap[tabId]);
+            }
         }
 
         function updateCurrentToolHeader(tabId) {
@@ -1401,7 +1444,7 @@ var htmlData = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x=
                 '<table>' +
                 '<col width="50"><col width="220"><col width="75"><col width="65"><col width="65"><col width="75"><col width="75"><col width="75"><col width="90">' +
                 '<thead>' +
-                '<tr><th colspan="9" class="brand-header">Civil Engine BBS Calc | <a href="https://www.bttotek.in/" target="_blank" class="brand-link">www.bttotek.in</a></th></tr>' +
+                '<tr><th colspan="9" class="brand-header">Civil Construction Calculator | <a href="https://www.bttotek.in/" target="_blank" class="brand-link">www.bttotek.in</a></th></tr>' +
                 '<tr><th colspan="9" class="header-brand">MASTER MEASUREMENT SHEET</th></tr>' +
                 '<tr><th colspan="9" class="header-brand">Project: ' + pName.toUpperCase() + (date ? ' | Date: ' + formatReportDate(date) : '') + '</th></tr>' +
                 '<tr class="th-main"><th>Sr.No.</th><th>Description</th><th>Unit</th><th>NOS 1</th><th>NOS 2</th><th>L</th><th>B</th><th>D</th><th>QTY</th></tr>' +
@@ -1434,6 +1477,7 @@ var htmlData = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x=
 
             // Android Studio WebView: use native Android bridge.
             // This prevents WebView from saving the Excel payload as .bin.
+            // EXISTING EXCEL DOWNLOAD BRIDGE — DO NOT CHANGE.
             if (window.AndroidShare && typeof window.AndroidShare.downloadBase64File === 'function') {
                 var base64Data = btoa(unescape(encodeURIComponent(htmlData)));
                 window.AndroidShare.downloadBase64File(base64Data, 'measurement', pName);
@@ -1750,6 +1794,48 @@ var htmlData = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x=
 
             document.getElementById('pressResult').innerText = res.toFixed(2) + " " + to;
         }
+    
+/* ===== ADMOB NATIVE BRIDGE CONFIG ===== */
+window.BTTOTEK_ADMOB = {
+    appId: "ca-app-pub-8429448930796495~5201727887",
+    bannerAdUnitId: "ca-app-pub-8429448930796495/5362357447"
+};
+
+function requestNativeBannerAd(slotId) {
+    try {
+        if (window.AndroidShare && typeof window.AndroidShare.showBannerAd === 'function') {
+            window.AndroidShare.showBannerAd(slotId);
+            return;
+        }
+    } catch (e) {
+        console.warn('Native banner bridge failed:', e);
+    }
+}
+
+function hideNativeBannerAd() {
+    try {
+        if (window.AndroidShare && typeof window.AndroidShare.hideBannerAd === 'function') {
+            window.AndroidShare.hideBannerAd();
+        }
+    } catch (e) {
+        console.warn('Native banner hide bridge failed:', e);
+    }
+}
+
+function getAdSlotRect(slotId) {
+    var el = document.getElementById(slotId);
+    if (!el) return null;
+    var r = el.getBoundingClientRect();
+    return {
+        top: r.top,
+        left: r.left,
+        width: r.width,
+        height: r.height,
+        bottom: r.bottom,
+        visible: r.bottom > 0 && r.top < window.innerHeight
+    };
+}
+
     </script>
 </head>
 <body>
@@ -1775,11 +1861,11 @@ var htmlData = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x=
 
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 <div class="sidebar-drawer" id="sidebarDrawer">
-    <div class="sidebar-header-box" onclick="loadHomePage()" aria-label="Civil Engine BBS Calc">
+    <div class="sidebar-header-box" onclick="loadHomePage()" aria-label="Civil Construction Calculator">
         <div class="sidebar-home-logo-icon">🏠</div>
         <div class="sidebar-app-details">
-            <h3>Civil Engine</h3>
-            <p>BBS Calc v2.2 • BTTOTEK Solutions</p>
+            <h3>Civil Construction Calculator</h3>
+            <p>Calcs v2.5 • BTTOTEK Solutions</p>
         </div>
     </div>
 
@@ -1982,8 +2068,12 @@ var htmlData = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x=
                 </div>
             </div>
         </div>
-    </div>
-
+    
+        <!-- Banner ad: normal-flow blank-space slot only; not sticky/fixed. -->
+        <div id="adSlotBbs" class="admob-banner-slot" data-ad-slot="ca-app-pub-8429448930796495/5362357447" aria-label="Advertisement">
+            <div class="admob-banner-placeholder"></div>
+        </div>
+</div>
     <!-- 2. CALCULATOR TAB -->
     <div id="main-tab-calculator" class="main-tab-panel">
         <div class="horiz-nav-scroll-wrapper">
@@ -2342,8 +2432,12 @@ var htmlData = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x=
             </div>
 
         </div>
-    </div>
-
+    
+        <!-- Banner ad: normal-flow blank-space slot only; not sticky/fixed. -->
+        <div id="adSlotCalculator" class="admob-banner-slot" data-ad-slot="ca-app-pub-8429448930796495/5362357447" aria-label="Advertisement">
+            <div class="admob-banner-placeholder"></div>
+        </div>
+</div>
     <!-- 3. MASTER MEASUREMENT SHEET TAB -->
     <div id="main-tab-measurement" class="main-tab-panel">
         <div class="mm-sub-tabs-nav">
@@ -2470,8 +2564,12 @@ var htmlData = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x=
                 <button class="action-btn" style="background: #10b981;" onclick="exportMasterMeasExcel()">📥 Download Excel</button>
             </div>
         </div>
-    </div>
-
+    
+        <!-- Banner ad: normal-flow blank-space slot only; not sticky/fixed. -->
+        <div id="adSlotMeasurement" class="admob-banner-slot" data-ad-slot="ca-app-pub-8429448930796495/5362357447" aria-label="Advertisement">
+            <div class="admob-banner-placeholder"></div>
+        </div>
+</div>
     <!-- 4. FULL INTEGRATED UNIT CONVERTER TAB -->
     <div id="main-tab-unit" class="main-tab-panel">
         <div class="unit-nav-scroll-wrapper">
@@ -2655,10 +2753,14 @@ var htmlData = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x=
             </div>
 
         </div>
-    </div>
-
+    
+        <!-- Banner ad: normal-flow blank-space slot only; not sticky/fixed. -->
+        <div id="adSlotUnit" class="admob-banner-slot" data-ad-slot="ca-app-pub-8429448930796495/5362357447" aria-label="Advertisement">
+            <div class="admob-banner-placeholder"></div>
+        </div>
 </div>
 
+</div>
 <!-- FIXED BOTTOM NAVIGATION BAR -->
 <nav class="bottom-nav-bar">
     <button class="bottom-nav-item active" onclick="switchMainShellTab('main-tab-bbs', this)">
@@ -2765,11 +2867,11 @@ var htmlData = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x=
         <button class="modal-close-btn" onclick="closeAllModals()">X</button>
         <h3>🔒 Privacy Policy</h3>
         <div class="legal-modal-content">
-            <p>Civil Engine BBS Calc is designed so that its core calculation and project-record features can operate locally on the device without requiring a continuous internet connection.</p>
+            <p>Civil Construction Calculator is designed so that its core calculation and project-record features can operate locally on the device without requiring a continuous internet connection.</p>
             <h4>Data Collection & Storage</h4>
             <p>Project names, BBS entries, measurement records, estimates and calculation history are stored locally on the device for the app's core features. The app does not require an account for these features. Users should export or back up important records before clearing app data or uninstalling the app.</p>
             <h4>Third-Party Services</h4>
-            <p>This V2.2 app HTML does not include website Google Analytics or Google AdSense scripts.</p>
+            <p>This V2.5 app HTML does not include website Google Analytics or Google AdSense scripts.</p>
             <h4>Support</h4>
             <p>For support or privacy questions, use the developer contact information published on the official Google Play listing.</p>
         </div>
@@ -2781,7 +2883,7 @@ var htmlData = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x=
         <button class="modal-close-btn" onclick="closeAllModals()">X</button>
         <h3>📜 Terms & Conditions</h3>
         <div class="legal-modal-content">
-            <p>By using Civil Engine BBS Calc, you agree to the following terms:</p>
+            <p>By using Civil Construction Calculator, you agree to the following terms:</p>
             <h4>Usage Context</h4>
             <p>This software is provided as a supportive calculation tool for civil engineers, site supervisors, and quantity estimators.</p>
             <h4>User Responsibility</h4>
@@ -2799,7 +2901,7 @@ var htmlData = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x=
         <button class="modal-close-btn" onclick="closeAllModals()">X</button>
         <h3>⚠️ Engineering Disclaimer</h3>
         <div class="legal-modal-content">
-            <p>Civil Engine BBS Calc is an estimation utility designed to assist with structural quantity estimates and bar bending schedules.</p>
+            <p>Civil Construction Calculator is an estimation utility designed to assist with structural quantity estimates and bar bending schedules.</p>
             <h4>Disclaimer of Liability</h4>
             <p>Results depend on user inputs, formulas, assumptions, rounding, project specifications and site conditions. Lap requirements, development lengths, hooks, anchorage, cover, waste factors and other project-specific requirements must be reviewed by a qualified professional. The app is a supporting calculation tool and does not replace professional engineering judgment.</p>
         </div>
@@ -2811,10 +2913,10 @@ var htmlData = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x=
         <button class="modal-close-btn" onclick="closeAllModals()">X</button>
         <h3 style="color:var(--primary-color); border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-top: 5px;">ℹ️ About BBS Engine</h3>
         <div style="font-size:13px; line-height:1.6; color:var(--text-main);">
-            <p><strong>System Version:</strong> 2.2.0 (V2.2)</p>
-            <p>Civil Engine BBS Calc is a local-first structural quantity and calculation utility for quantity estimators, site engineers, contractors, students and construction professionals.</p>
+            <p><strong>System Version:</strong> 2.5.0 (V2.5)</p>
+            <p>Civil Construction Calculator is a local-first structural quantity and calculation utility for quantity estimators, site engineers, contractors, students and construction professionals.</p>
             <p><strong>Brand:</strong> BTTOTEK Solutions</p>
-            <p>© 2026 Civil Engine BBS Calc. All rights reserved.</p>
+            <p>© 2026 Civil Construction Calculator. All rights reserved.</p>
         </div>
     </div>
 </div>
